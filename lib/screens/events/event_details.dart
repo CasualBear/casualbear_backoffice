@@ -1,4 +1,5 @@
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
 
 class EventDetailsScreen extends StatefulWidget {
@@ -130,6 +131,7 @@ class TeamCard extends StatelessWidget {
   final int id;
 
   const TeamCard({
+    super.key,
     required this.name,
     required this.id,
   });
@@ -262,6 +264,15 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
               },
             ),
             const SizedBox(height: 8),
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Location',
+              ),
+              onTap: () {
+                _selectLocation(context);
+              },
+              readOnly: true,
+            ),
             Text('Answers:'),
             const SizedBox(height: 8),
             ..._answerControllers.asMap().entries.map((entry) {
@@ -339,5 +350,16 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ),
       ],
     );
+  }
+
+  Future<void> _selectLocation(BuildContext context) async {
+    final selectedLocation = await Navigator.push<String?>(
+      context,
+      MaterialPageRoute(builder: (context) => MapScreen()),
+    );
+
+    if (selectedLocation != null) {
+      setState(() {});
+    }
   }
 }
