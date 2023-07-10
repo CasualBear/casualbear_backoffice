@@ -10,8 +10,12 @@ class AuthenticationRepository {
     try {
       final body = jsonEncode({'email': username, 'password': password});
       final response = await apiService.post('/api/user/login', body: body);
-      final String token = response.data['token'];
-      return token;
+      final String role = response.data['role'];
+      if (role == "ADMIN") {
+        return role;
+      } else {
+        throw Exception();
+      }
     } catch (e) {
       print(e);
       throw Exception();
