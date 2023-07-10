@@ -5,8 +5,6 @@ import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/screens/authentication/cubit/authentication_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/event_screen.dart';
-import 'package:casualbear_backoffice/screens/user_screen.dart';
-import 'package:casualbear_backoffice/widgets/menu_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -65,15 +63,10 @@ class _MainScreenState extends State<MainScreen> {
             style: const TextStyle(color: Colors.white),
           ),
         ),
-        body: Column(children: [
-          MenuList(
-            onSelected: (index) {
-              setState(() {
-                currentIndex = index;
-              });
-            },
-          ),
-          currentIndex == 0 ? const Expanded(child: EventScreen()) : const Expanded(child: UserScreen())
-        ]));
+        body: const Column(
+          children: [
+            Expanded(child: EventScreen()),
+          ],
+        ));
   }
 }

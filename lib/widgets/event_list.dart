@@ -1,5 +1,6 @@
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
+import 'package:casualbear_backoffice/screens/events/event_details.dart';
 import 'package:casualbear_backoffice/widgets/create_event_dialog.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -279,6 +280,30 @@ class _EventListState extends State<EventList> {
                         },
                       ),
                       const Icon(Icons.delete, color: Colors.red)
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push<void>(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => EventDetailsScreen(event: event),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Ver Detalhes'.toUpperCase(),
+                        style:
+                            TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor)
                     ],
                   ),
                 ),
