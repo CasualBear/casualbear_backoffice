@@ -21,7 +21,19 @@ class EventDetailsScreen extends StatefulWidget {
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
   final List<Question> questions = [];
-  final List<Zone> zones = [];
+  late final List<Zone> zones;
+
+  @override
+  void initState() {
+    zones = [
+      Zone(name: "${widget.event.name} Zone A", isLocked: false),
+      Zone(name: "${widget.event.name} Zone B", isLocked: false),
+      Zone(name: "${widget.event.name} Zone C", isLocked: false),
+      Zone(name: "${widget.event.name} Zone D", isLocked: false),
+      Zone(name: "${widget.event.name} Zone E", isLocked: false),
+    ];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +73,36 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             id: 2,
           ),
           const SizedBox(height: 16),
+          const Text(
+            'Gestão de Zonas - ',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: zones.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      title: Text(zones[index].name),
+                      trailing: Switch(
+                        value: zones[index].isLocked,
+                        onChanged: (value) {
+                          setState(() {
+                            zones[index].isLocked = value;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                }),
+          ),
+          const SizedBox(height: 10),
           _buildQuestionTitle(),
+          const SizedBox(height: 16),
           const SizedBox(height: 8),
           ...questions.map((question) => QuestionItem(
                 latitude: question.coordinates.latitude,
@@ -91,12 +132,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     });
   }
 
-  void addZones(String name, List<Coordinates> coordinateZones) {
-    setState(() {
-      zones.add(Zone(name: name, coordinates: coordinateZones));
-    });
-  }
-
   _buildQuestionTitle() {
     return Row(
       children: [
@@ -114,6 +149,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               context: context,
               builder: (BuildContext context) => AddQuestionDialog(
                 onAddQuestion: addQuestion,
+                zones: zones,
               ),
             );
           },

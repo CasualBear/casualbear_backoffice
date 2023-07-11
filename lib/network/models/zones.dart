@@ -1,8 +1,6 @@
-import 'package:casualbear_backoffice/network/models/coordinates.dart';
-
 class Zone {
   final String name;
-  List<Coordinates> coordinates;
+  bool isLocked;
 
-  Zone({required this.name, required this.coordinates});
+  Zone({required this.name, required this.isLocked});
 }
