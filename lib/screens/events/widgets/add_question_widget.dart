@@ -1,15 +1,15 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:casualbear_backoffice/network/models/zones.dart';
+import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
 class AddQuestionDialog extends StatefulWidget {
-  final List<Zone> zones;
-  final Function(String, List<String>, int, LatLong, String) onAddQuestion;
+  final Event event;
+  final Function(Question question) onAddQuestion;
 
-  const AddQuestionDialog({Key? key, required this.onAddQuestion, required this.zones}) : super(key: key);
+  const AddQuestionDialog({Key? key, required this.onAddQuestion, required this.event}) : super(key: key);
 
   @override
   _AddQuestionDialogState createState() => _AddQuestionDialogState();
@@ -117,10 +117,10 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
                     onChanged: (value) {
                       setState(() {});
                     },
-                    items: widget.zones.map((zone) {
+                    items: widget.event.zones.map((zone) {
                       return DropdownMenuItem(
                         value: zone,
-                        child: Text(zone.name + (zone.isLocked ? ' (Unlocked)' : ' (Locked)')),
+                        child: Text(zone.name + (zone.active ? ' (Unlocked)' : ' (Locked)')),
                       );
                     }).toList(),
                   ),
@@ -218,10 +218,26 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              final question = _questionController.text;
-              final address = _locationController.text;
               final answers = _answerControllers.map((controller) => controller.text).toList();
-              widget.onAddQuestion(question, answers, _correctAnswerIndex, questionCoordinates, address);
+
+              List<String> answerDTO = [];
+
+              for (var element in answers) {
+                answerDTO.add(element);
+              }
+
+              Question question = Question(
+                  id: 1, // backend ignores this
+                  question: _questionController.text,
+                  answers: answerDTO,
+                  correctAnswerIndex: _correctAnswerIndex,
+                  zone: selectedZone ?? "ZoneA",
+                  latitude: questionCoordinates.latitude.toString(),
+                  longitude: questionCoordinates.longitude.toString(),
+                  address: _locationController.text,
+                  eventId: widget.event.id);
+
+              widget.onAddQuestion(question);
               Navigator.of(context).pop();
             }
           },

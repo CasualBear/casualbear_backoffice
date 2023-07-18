@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import '../network/services/api_error.dart';
@@ -50,14 +52,64 @@ class EventRepository {
     }
   }
 
-  Future<List<Event>> getEvent() async {
+  Future<void> addQuestion(Question question, String eventId) async {
+    try {
+      await apiService.post('/api/event/events/$eventId/questions', body: question);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  Future<void> updateQuestion(Question question, String eventId) async {
+    try {
+      final body = jsonEncode(question.toJson());
+      await apiService.put('/api/event/questions/${question.id}', body: body);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  deleteQuestion(String eventId) async {
+    try {
+      await apiService.delete('/api/event/questions/$eventId');
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  Future<List<Event>> getEvents() async {
     try {
       final response = await apiService.get('/api/event/events');
-      var listOfEvents = List<Event>.from(response.data['events'].map((i) => Event.fromJson(i)));
+      var eventDataList = List<dynamic>.from(response.data['events']);
+      var listOfEvents = eventDataList.map((eventData) => Event.fromJson(eventData as Map<String, dynamic>)).toList();
       return listOfEvents;
     } catch (e) {
       print(e);
-      return [];
+      rethrow;
+    }
+  }
+
+  Future<Event> getEvent(String id) async {
+    try {
+      final response = await apiService.get('/api/event/events/$id');
+      var eventData = response.data['event'];
+      var event = Event.fromJson(eventData as Map<String, dynamic>);
+      return event;
+    } catch (e) {
+      print(e);
+      rethrow;
     }
   }
 

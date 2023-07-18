@@ -221,7 +221,7 @@ class _EventListState extends State<EventList> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Image.network(event.rawUrl ?? '', width: 100, height: 100)
+              Image.network(event.rawUrl, width: 100, height: 100)
             ],
           ),
           const SizedBox(height: 10),

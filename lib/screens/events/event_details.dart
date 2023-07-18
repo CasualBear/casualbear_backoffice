@@ -1,18 +1,15 @@
-// ignore_for_file: library_private_types_in_public_api
-
-import 'package:casualbear_backoffice/network/models/coordinates.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
-import 'package:casualbear_backoffice/network/models/question.dart';
-import 'package:casualbear_backoffice/network/models/zones.dart';
+import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/event_info.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/question_item.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/team_item.dart';
 import 'package:flutter/material.dart';
-import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   final Event event;
+
   const EventDetailsScreen({Key? key, required this.event}) : super(key: key);
 
   @override
@@ -20,19 +17,14 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
-  final List<Question> questions = [];
-  late final List<Zone> zones;
-
   @override
   void initState() {
-    zones = [
-      Zone(name: "${widget.event.name} Zone A", isLocked: false),
-      Zone(name: "${widget.event.name} Zone B", isLocked: false),
-      Zone(name: "${widget.event.name} Zone C", isLocked: false),
-      Zone(name: "${widget.event.name} Zone D", isLocked: false),
-      Zone(name: "${widget.event.name} Zone E", isLocked: false),
-    ];
+    BlocProvider.of<EventCubit>(context).getEvent(widget.event.id.toString());
     super.initState();
+  }
+
+  void addQuestion(Question question) {
+    BlocProvider.of<EventCubit>(context).addQuestion(question, widget.event.id.toString());
   }
 
   @override
@@ -40,99 +32,122 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(widget.event.selectedColor),
-        title: Text(widget.event.name),
+        title: Text(
+          widget.event.name,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          EventInfoItem(title: 'Event Name', value: widget.event.name),
-          const SizedBox(height: 8),
-          EventInfoItem(title: 'Event Description', value: widget.event.description),
-          const SizedBox(height: 8),
-          EventInfoItem(
-            title: 'Event Icon',
-            value: Image.network(
-              widget.event.rawUrl!,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Equipas dentro do Evento',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const TeamItem(
-            name: 'Team A',
-            id: 1,
-          ),
-          const TeamItem(
-            name: 'Team B',
-            id: 2,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Gestão de Zonas - ',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: zones.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(zones[index].name),
-                      trailing: Switch(
-                        value: zones[index].isLocked,
-                        onChanged: (value) {
-                          setState(() {
-                            zones[index].isLocked = value;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                }),
-          ),
-          const SizedBox(height: 10),
-          _buildQuestionTitle(),
-          const SizedBox(height: 16),
-          const SizedBox(height: 8),
-          ...questions.map((question) => QuestionItem(
-                latitude: question.coordinates.latitude,
-                longitude: question.coordinates.longitude,
-                address: question.coordinates.address,
-                question: question.question,
-                answers: question.answers,
-                correctAnswerIndex: question.correctAnswerIndex,
-              )),
-        ],
+      body: BlocConsumer<EventCubit, EventState>(
+        buildWhen: (previous, current) =>
+            current is SingleEventGetLoading || current is SingleEventGetLoaded || current is EventGetError,
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is SingleEventGetLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is SingleEventGetLoaded) {
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                EventInfoItem(event: state.event),
+                const SizedBox(height: 16),
+                const Text(
+                  'Equipas dentro do Evento',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const TeamItem(
+                  name: 'Team A',
+                  id: 1,
+                ),
+                const TeamItem(
+                  name: 'Team B',
+                  id: 2,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Gestão de Zonas - ',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  children: state.event.zones
+                      .map((zone) => Card(
+                            child: ListTile(
+                              title: Text(zone.name),
+                              trailing: Switch(
+                                value: zone.active,
+                                onChanged: (value) {
+                                  setState(() {
+                                    zone.active = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 10),
+                _buildQuestionTitle(),
+                const SizedBox(height: 16),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(), // Disable scrolling inside the ListView
+                  itemCount: state.event.questions.length,
+                  itemBuilder: (context, index) {
+                    final question = state.event.questions[index];
+                    final answers = question.answers ?? [];
+                    final correctAnswerIndex =
+                        question.correctAnswerIndex < answers.length ? question.correctAnswerIndex : 0;
+
+                    Question questionDTO = Question(
+                      id: question.id,
+                      latitude: question.latitude,
+                      longitude: question.longitude,
+                      address: question.address,
+                      zone: question.zone,
+                      question: question.question,
+                      answers: answers,
+                      correctAnswerIndex: correctAnswerIndex,
+                      eventId: state.event.id,
+                    );
+
+                    return Column(
+                      children: [
+                        QuestionItem(
+                          event: state.event,
+                          onDeleteQuestion: (question) {
+                            BlocProvider.of<EventCubit>(context)
+                                .deleteQuestion(question.id.toString(), widget.event.id.toString());
+                          },
+                          question: questionDTO,
+                          onEditQuestion: (question) {
+                            BlocProvider.of<EventCubit>(context).updateQuestion(question, widget.event.id.toString());
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                )
+              ],
+            );
+          } else {
+            return const Text("Impossible to load event details");
+          }
+        },
       ),
     );
   }
 
-  void addQuestion(String question, List<String> answers, int correctAnswerIndex, LatLong coordinates, String address) {
-    setState(() {
-      questions.add(Question(
-        coordinates: Coordinates(
-          address: address,
-          latitude: coordinates.latitude.toString(),
-          longitude: coordinates.longitude.toString(),
-        ),
-        question: question,
-        answers: answers,
-        correctAnswerIndex: correctAnswerIndex,
-      ));
-    });
-  }
-
-  _buildQuestionTitle() {
+  Widget _buildQuestionTitle() {
     return Row(
       children: [
         const Text(
@@ -148,8 +163,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             showDialog(
               context: context,
               builder: (BuildContext context) => AddQuestionDialog(
+                event: widget.event,
                 onAddQuestion: addQuestion,
-                zones: zones,
               ),
             );
           },
@@ -163,7 +178,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

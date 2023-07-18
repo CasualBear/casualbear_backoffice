@@ -15,10 +15,18 @@ class EventCreationError extends EventState {}
 // Get
 class EventGetLoading extends EventState {}
 
+class SingleEventGetLoading extends EventState {}
+
 class EventGetLoaded extends EventState {
   final List<Event> events;
 
   EventGetLoaded(this.events);
+}
+
+class SingleEventGetLoaded extends EventState {
+  final Event event;
+
+  SingleEventGetLoaded(this.event);
 }
 
 class EventGetError extends EventState {}
@@ -30,3 +38,13 @@ class EventDeleteLoading extends EventState {}
 class EventDeleteLoaded extends EventState {}
 
 class EventDeleteError extends EventState {}
+
+// Question
+// Get
+class CreateQuestionLoading extends EventState {}
+
+class CreateQuestionLoaded extends EventState {
+  CreateQuestionLoaded();
+}
+
+class CreateQuestionError extends EventState {}

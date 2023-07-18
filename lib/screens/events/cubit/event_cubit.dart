@@ -31,8 +31,18 @@ class EventCubit extends Cubit<EventState> {
   void getEvents() async {
     emit(EventGetLoading());
     try {
-      List<Event> response = await repository.getEvent();
+      List<Event> response = await repository.getEvents();
       emit(EventGetLoaded(response));
+    } catch (e) {
+      emit(EventGetError());
+    }
+  }
+
+  void getEvent(String id) async {
+    emit(SingleEventGetLoading());
+    try {
+      Event response = await repository.getEvent(id);
+      emit(SingleEventGetLoaded(response));
     } catch (e) {
       emit(EventGetError());
     }
@@ -45,6 +55,41 @@ class EventCubit extends Cubit<EventState> {
       emit(EventDeleteLoaded());
     } catch (e) {
       emit(EventDeleteError());
+    }
+  }
+
+  // Question
+
+  void addQuestion(Question question, String eventId) async {
+    emit(CreateQuestionLoading());
+    try {
+      await repository.addQuestion(question, eventId);
+      Event response = await repository.getEvent(eventId);
+      emit(SingleEventGetLoaded(response));
+    } catch (e) {
+      emit(CreateQuestionError());
+    }
+  }
+
+  void updateQuestion(Question question, String eventId) async {
+    emit(CreateQuestionLoading());
+    try {
+      await repository.updateQuestion(question, eventId);
+      Event response = await repository.getEvent(eventId);
+      emit(SingleEventGetLoaded(response));
+    } catch (e) {
+      emit(CreateQuestionError());
+    }
+  }
+
+  void deleteQuestion(String questionId, String eventId) async {
+    emit(CreateQuestionLoading());
+    try {
+      await repository.deleteQuestion(questionId);
+      Event response = await repository.getEvent(eventId);
+      emit(SingleEventGetLoaded(response));
+    } catch (e) {
+      emit(CreateQuestionError());
     }
   }
 }
