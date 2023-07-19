@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:casualbear_backoffice/network/models/event.dart';
-import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
@@ -26,21 +23,17 @@ class QuestionItem extends StatefulWidget {
 class _QuestionItemState extends State<QuestionItem> {
   late TextEditingController _questionController;
   late List<TextEditingController> _answerControllers;
-  late int _correctAnswerIndex;
-  final _formKey = GlobalKey<FormState>();
+
   late LatLong questionCoordinates;
   String? selectedZone;
-  late TextEditingController _locationController;
 
   @override
   void initState() {
     _questionController = TextEditingController(text: widget.question.question);
-    _locationController = TextEditingController();
     _answerControllers = List.generate(
       widget.question.answers?.length ?? 0,
       (index) => TextEditingController(text: widget.question.answers?[index] ?? ''),
     );
-    _correctAnswerIndex = widget.question.correctAnswerIndex;
     super.initState();
   }
 
@@ -53,173 +46,91 @@ class _QuestionItemState extends State<QuestionItem> {
     super.dispose();
   }
 
-  void _editAnswers(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit Question'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Question:'),
-                    TextFormField(
-                      controller: _questionController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a question';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('Location:'),
-                    TextFormField(
-                      controller: _locationController,
-                      decoration: const InputDecoration(
-                        labelText: 'Location',
-                      ),
-                      onTap: () {
-                        Navigator.push<String?>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MapScreen(
-                              onAddressPicked: (latitude, longitude, address) {
-                                questionCoordinates = LatLong(latitude, longitude);
-                                setState(() {
-                                  _locationController.text = address;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      readOnly: true,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('Zone:'),
-                    DropdownButtonFormField<String>(
-                      value: widget.question.zone,
-                      onChanged: (value) {
-                        setState(() {
-                          widget.question.zone = value!;
-                        });
-                      },
-                      items: widget.event.zones.map((zone) {
-                        return DropdownMenuItem<String>(
-                          value: zone.name,
-                          child: Text(zone.name + (zone.active ? ' (Unlocked)' : ' (Locked)')),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('Answers:'),
-                    Column(
-                      children: List.generate(_answerControllers.length, (index) {
-                        final controller = _answerControllers[index];
-                        final isCorrectAnswer = index == widget.question.correctAnswerIndex;
-                        String answer = controller.text;
-                        List<String> parts = answer.split(",");
-                        String secondHalf = "";
-                        if (parts.length >= 2) {
-                          secondHalf = parts[1].trim().replaceAll("answer:", "").replaceAll("}", "").trim();
-                        }
-                        final initialValue = secondHalf.isNotEmpty ? secondHalf : 'No answer provided';
-                        controller.text = initialValue; // Set the initial value using the controller
-                        return TextFormField(
-                          controller: controller,
-                          decoration: InputDecoration(
-                            labelText: 'Answer ${index + 1}',
-                          ),
-                          onChanged: (value) {
-                            controller.text = value;
-                          },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter an answer';
-                            }
-                            return null;
-                          },
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('Correct Answer:'),
-                    DropdownButton<int>(
-                      value: _correctAnswerIndex,
-                      items: List.generate(
-                        _answerControllers.length,
-                        (index) => DropdownMenuItem<int>(
-                          value: index,
-                          child: Text('Answer ${index + 1}'),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _correctAnswerIndex = value ?? 0;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final editedQuestion = Question(
-                  id: widget.question.id,
-                  question: _questionController.text,
-                  answers: _answerControllers.map((controller) => controller.text).toList(),
-                  correctAnswerIndex: _correctAnswerIndex,
-                  zone: widget.question.zone,
-                  latitude: widget.question.latitude.toString(),
-                  longitude: widget.question.longitude.toString(),
-                  address: widget.question.address,
-                  createdAt: widget.question.createdAt,
-                  updatedAt: widget.question.updatedAt,
-                  eventId: widget.question.eventId,
-                );
-                widget.onEditQuestion(editedQuestion);
-                Navigator.pop(context);
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Card(
         child: ListTile(
-          title: Text(widget.question.question),
+          title: RichText(
+            text: TextSpan(
+              style: DefaultTextStyle.of(context).style.copyWith(
+                    fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                  ),
+              children: [
+                const TextSpan(
+                  text: 'Question: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: widget.question.question,
+                ),
+              ],
+            ),
+          ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Latitude: ${widget.question.latitude}'),
-              Text('Longitude: ${widget.question.longitude}'),
-              Text('Zone: ${widget.question.zone}'),
-              Text('Address: ${widget.question.address}'),
-              Text('Correct Answer Index: ${widget.question.correctAnswerIndex}'),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
+                    const TextSpan(text: 'Latitude: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: widget.question.latitude),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
+                    const TextSpan(text: 'Longitude: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: widget.question.longitude),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
+                    const TextSpan(text: 'Zone: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: widget.question.zone),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
+                    const TextSpan(text: 'Address: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: widget.question.address),
+                  ],
+                ),
+              ),
+              widget.question.answers!.isNotEmpty
+                  ? Text(
+                      'Correct Answer Index: ${widget.question.correctAnswerIndex}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                    )
+                  : Container(),
               const SizedBox(height: 16),
-              const Text('Answers:'),
+              widget.question.answers!.isEmpty
+                  ? const Text(
+                      'This is a challenge question',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
+                    )
+                  : const Text('Answers:'),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: widget.question.answers?.asMap().entries.map((entry) {
@@ -238,6 +149,7 @@ class _QuestionItemState extends State<QuestionItem> {
                         style: TextStyle(
                           fontWeight: isCorrectAnswer ? FontWeight.bold : FontWeight.normal,
                           color: isCorrectAnswer ? Colors.green : null,
+                          fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
                         ),
                       );
                     }).toList() ??
@@ -248,10 +160,6 @@ class _QuestionItemState extends State<QuestionItem> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () => _editAnswers(context),
-              ),
               IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: () {

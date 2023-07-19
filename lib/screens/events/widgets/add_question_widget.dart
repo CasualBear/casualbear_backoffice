@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +7,11 @@ class AddQuestionDialog extends StatefulWidget {
   final Event event;
   final Function(Question question) onAddQuestion;
 
-  const AddQuestionDialog({Key? key, required this.onAddQuestion, required this.event}) : super(key: key);
+  const AddQuestionDialog({
+    Key? key,
+    required this.onAddQuestion,
+    required this.event,
+  }) : super(key: key);
 
   @override
   _AddQuestionDialogState createState() => _AddQuestionDialogState();
@@ -20,9 +22,9 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
   late TextEditingController _questionController;
   late TextEditingController _locationController;
   late LatLong questionCoordinates;
-  String? selectedZone;
+  Zone? selectedZone;
 
-  bool _showAnswers = false;
+  bool _isChallenge = false;
 
   final List<TextEditingController> _answerControllers = [];
   int _correctAnswerIndex = 0;
@@ -36,9 +38,21 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
     _answerControllers.add(TextEditingController());
   }
 
+  List<String> _getAnswers() {
+    List<String> answers = [];
+    for (var controller in _answerControllers) {
+      final answer = controller.text.trim();
+      if (answer.isNotEmpty) {
+        answers.add(answer);
+      }
+    }
+    return answers;
+  }
+
   @override
   void dispose() {
     _questionController.dispose();
+    _locationController.dispose();
     for (var controller in _answerControllers) {
       controller.dispose();
     }
@@ -115,7 +129,9 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
                   child: DropdownButtonFormField(
                     value: selectedZone,
                     onChanged: (value) {
-                      setState(() {});
+                      setState(() {
+                        selectedZone = value;
+                      });
                     },
                     items: widget.event.zones.map((zone) {
                       return DropdownMenuItem(
@@ -133,17 +149,17 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
               children: [
                 const Text('Is Challenge?'),
                 Switch(
-                  value: _showAnswers,
+                  value: _isChallenge,
                   onChanged: (value) {
                     setState(() {
-                      _showAnswers = value;
+                      _isChallenge = value;
                     });
                   },
                 ),
               ],
             ),
             Visibility(
-              visible: !_showAnswers,
+              visible: !_isChallenge,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -218,24 +234,19 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              final answers = _answerControllers.map((controller) => controller.text).toList();
-
-              List<String> answerDTO = [];
-
-              for (var element in answers) {
-                answerDTO.add(element);
-              }
+              List<String> answers = !_isChallenge ? _getAnswers() : [];
 
               Question question = Question(
-                  id: 1, // backend ignores this
-                  question: _questionController.text,
-                  answers: answerDTO,
-                  correctAnswerIndex: _correctAnswerIndex,
-                  zone: selectedZone ?? "ZoneA",
-                  latitude: questionCoordinates.latitude.toString(),
-                  longitude: questionCoordinates.longitude.toString(),
-                  address: _locationController.text,
-                  eventId: widget.event.id);
+                id: 1, // backend ignores this
+                question: _questionController.text,
+                answers: answers.isNotEmpty ? answers : [],
+                correctAnswerIndex: _correctAnswerIndex,
+                zone: selectedZone?.name ?? 'ZoneA',
+                latitude: questionCoordinates.latitude.toString(),
+                longitude: questionCoordinates.longitude.toString(),
+                address: _locationController.text,
+                eventId: widget.event.id,
+              );
 
               widget.onAddQuestion(question);
               Navigator.of(context).pop();
