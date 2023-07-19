@@ -82,6 +82,17 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
+  void updateZoneStates(String eventId, String zoneNameToUpdate, bool status) async {
+    emit(CreateQuestionLoading());
+    try {
+      await repository.updateZoneState(eventId, zoneNameToUpdate, status);
+      Event response = await repository.getEvent(eventId);
+      emit(SingleEventGetLoaded(response));
+    } catch (e) {
+      emit(CreateQuestionError());
+    }
+  }
+
   void deleteQuestion(String questionId, String eventId) async {
     emit(CreateQuestionLoading());
     try {

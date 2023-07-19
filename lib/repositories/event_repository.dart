@@ -77,6 +77,20 @@ class EventRepository {
     }
   }
 
+  Future<void> updateZoneState(String eventId, String zoneNameToUpdate, bool status) async {
+    try {
+      final request = {"state": status ? "active" : "inactive"};
+      final body = jsonEncode(request);
+      await apiService.put('/api/event/events/$eventId/zones/$zoneNameToUpdate', body: body);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
   deleteQuestion(String eventId) async {
     try {
       await apiService.delete('/api/event/questions/$eventId');

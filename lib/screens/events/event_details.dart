@@ -89,6 +89,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   setState(() {
                                     zone.active = value;
                                   });
+
+                                  BlocProvider.of<EventCubit>(context)
+                                      .updateZoneStates(widget.event.id.toString(), zone.name, zone.active);
                                 },
                               ),
                             ),
