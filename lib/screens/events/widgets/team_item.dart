@@ -1,3 +1,4 @@
+import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:flutter/material.dart';
 
 class TeamItem extends StatelessWidget {
@@ -12,8 +13,12 @@ class TeamItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Add your logic to handle team card tap
-        // Navigate to the team details screen
+        Navigator.push<void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => TeamDetails(teamId: name),
+          ),
+        );
       },
       child: Card(
         color: Colors.grey[200],

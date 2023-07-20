@@ -1,5 +1,6 @@
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
+import 'package:casualbear_backoffice/screens/events/team_scores.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/event_info.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/question_item.dart';
@@ -69,6 +70,46 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       name: state.event.teams?[index] ?? '',
                     );
                   },
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Informação em tempo real',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push<void>(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) => TeamScores(scoresData: [
+                                {'teamId': 'Team 1', 'currentScore': 100, 'avgTimeOfAnswer': "22222"},
+                                {'teamId': 'Team 1', 'currentScore': 50, 'avgTimeOfAnswer': "22222"},
+                                {'teamId': 'Team 1', 'currentScore': 100, 'avgTimeOfAnswer': "22222"},
+                                // Add more team data here
+                              ]),
+                            ),
+                          );
+                        },
+                        child: const Text('Ver Classificação em tempo real'),
+                      ),
+                    ),
+                    const SizedBox(width: 8), // Add some spacing between the buttons
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle Ver Localização em tempo real button tap
+                        },
+                        child: const Text('Ver Localização em tempo real'),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 const Text(

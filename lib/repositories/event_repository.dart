@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import '../network/services/api_error.dart';
 import 'package:dio/dio.dart';
@@ -136,6 +137,20 @@ class EventRepository {
       } else {
         rethrow;
       }
+    }
+  }
+
+  // Teams
+
+  Future<List<TeamMember>> getUsersByTeam(String teamId) async {
+    try {
+      final response = await apiService.get('/api/event/team-members/$teamId');
+      List<dynamic> responseData = response.data;
+      var teamMembers =
+          responseData.map((teamMemberdata) => TeamMember.fromJson(teamMemberdata as Map<String, dynamic>)).toList();
+      return teamMembers;
+    } catch (e) {
+      rethrow;
     }
   }
 }

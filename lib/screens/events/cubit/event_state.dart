@@ -50,3 +50,15 @@ class CreateQuestionLoaded extends EventState {
 }
 
 class CreateQuestionError extends EventState {}
+
+// Teams
+
+class GetTeamMemberLoading extends EventState {}
+
+class GetTeamMemberLoaded extends EventState {
+  final List<TeamMember> teamMembers;
+
+  GetTeamMemberLoaded({required this.teamMembers});
+}
+
+class GetTeamMemberError extends EventState {}
