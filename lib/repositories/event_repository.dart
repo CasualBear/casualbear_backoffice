@@ -52,57 +52,6 @@ class EventRepository {
     }
   }
 
-  Future<void> addQuestion(Question question, String eventId) async {
-    try {
-      await apiService.post('/api/event/events/$eventId/questions', body: question);
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw ApiError.fromJson(e.response!.data['error']);
-      } else {
-        rethrow;
-      }
-    }
-  }
-
-  Future<void> updateQuestion(Question question, String eventId) async {
-    try {
-      final body = jsonEncode(question.toJson());
-      await apiService.put('/api/event/questions/${question.id}', body: body);
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw ApiError.fromJson(e.response!.data['error']);
-      } else {
-        rethrow;
-      }
-    }
-  }
-
-  Future<void> updateZoneState(String eventId, String zoneNameToUpdate, bool status) async {
-    try {
-      final request = {"state": status ? "active" : "inactive"};
-      final body = jsonEncode(request);
-      await apiService.put('/api/event/events/$eventId/zones/$zoneNameToUpdate', body: body);
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw ApiError.fromJson(e.response!.data['error']);
-      } else {
-        rethrow;
-      }
-    }
-  }
-
-  deleteQuestion(String eventId) async {
-    try {
-      await apiService.delete('/api/event/questions/$eventId');
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw ApiError.fromJson(e.response!.data['error']);
-      } else {
-        rethrow;
-      }
-    }
-  }
-
   Future<List<Event>> getEvents() async {
     try {
       final response = await apiService.get('/api/event/events');
@@ -132,6 +81,61 @@ class EventRepository {
       await apiService.delete('/api/event/events/$eventId');
     } catch (e) {
       print(e);
+    }
+  }
+
+// Questions
+
+  Future<void> addQuestion(Question question, String eventId) async {
+    try {
+      await apiService.post('/api/event/events/$eventId/questions', body: question);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  Future<void> updateQuestion(Question question, String eventId) async {
+    try {
+      final body = jsonEncode(question.toJson());
+      await apiService.put('/api/event/questions/${question.id}', body: body);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  deleteQuestion(String eventId) async {
+    try {
+      await apiService.delete('/api/event/questions/$eventId');
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  // Zones
+
+  Future<void> updateZoneState(String eventId, String zoneNameToUpdate, bool status) async {
+    try {
+      final request = {"state": status ? "active" : "inactive"};
+      final body = jsonEncode(request);
+      await apiService.put('/api/event/events/$eventId/zones/$zoneNameToUpdate', body: body);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw ApiError.fromJson(e.response!.data['error']);
+      } else {
+        rethrow;
+      }
     }
   }
 }

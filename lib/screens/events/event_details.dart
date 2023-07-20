@@ -61,13 +61,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const TeamItem(
-                  name: 'Team A',
-                  id: 1,
-                ),
-                const TeamItem(
-                  name: 'Team B',
-                  id: 2,
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: state.event.teams?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return TeamItem(
+                      name: state.event.teams?[index] ?? '',
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -103,7 +104,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 const SizedBox(height: 16),
                 ListView.builder(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(), // Disable scrolling inside the ListView
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.event.questions.length,
                   itemBuilder: (context, index) {
                     final question = state.event.questions[index];

@@ -5,6 +5,7 @@ class Event {
   int selectedColor;
   String rawUrl;
   List<Zone> zones;
+  List<String>? teams;
   DateTime createdAt;
   DateTime updatedAt;
   List<Question> questions;
@@ -16,6 +17,7 @@ class Event {
     required this.selectedColor,
     required this.rawUrl,
     required this.zones,
+    required this.teams,
     required this.createdAt,
     required this.updatedAt,
     required this.questions,
@@ -25,6 +27,7 @@ class Event {
     return Event(
       id: json['id'],
       name: json['name'],
+      teams: json['teams'] != null ? List<String>.from(json['teams']) : null,
       description: json['description'],
       selectedColor: json['selectedColor'],
       rawUrl: json['rawUrl'],
@@ -39,6 +42,7 @@ class Event {
     return {
       'id': id,
       'name': name,
+      'teams': teams,
       'description': description,
       'selectedColor': selectedColor,
       'rawUrl': rawUrl,

@@ -5,14 +5,14 @@ abstract class EventState {}
 
 class EventInitial extends EventState {}
 
-// Create
+// Event Creation
 class EventCreationLoading extends EventState {}
 
 class EventCreationLoaded extends EventState {}
 
 class EventCreationError extends EventState {}
 
-// Get
+// Event Get
 class EventGetLoading extends EventState {}
 
 class SingleEventGetLoading extends EventState {}
@@ -23,6 +23,7 @@ class EventGetLoaded extends EventState {
   EventGetLoaded(this.events);
 }
 
+// Single Event Creation
 class SingleEventGetLoaded extends EventState {
   final Event event;
 
@@ -31,7 +32,7 @@ class SingleEventGetLoaded extends EventState {
 
 class EventGetError extends EventState {}
 
-/// Delete
+// Delete Event Creation
 
 class EventDeleteLoading extends EventState {}
 
@@ -39,7 +40,8 @@ class EventDeleteLoaded extends EventState {}
 
 class EventDeleteError extends EventState {}
 
-// Question
+// Questions
+
 // Get
 class CreateQuestionLoading extends EventState {}
 

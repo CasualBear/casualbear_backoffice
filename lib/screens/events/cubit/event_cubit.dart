@@ -8,6 +8,8 @@ class EventCubit extends Cubit<EventState> {
   final EventRepository repository;
   EventCubit(this.repository) : super(EventInitial());
 
+  // Event
+
   void createEvent(List<int> selectedFile, String name, String description, String color) async {
     emit(EventCreationLoading());
     try {
@@ -82,10 +84,10 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
-  void updateZoneStates(String eventId, String zoneNameToUpdate, bool status) async {
+  void deleteQuestion(String questionId, String eventId) async {
     emit(CreateQuestionLoading());
     try {
-      await repository.updateZoneState(eventId, zoneNameToUpdate, status);
+      await repository.deleteQuestion(questionId);
       Event response = await repository.getEvent(eventId);
       emit(SingleEventGetLoaded(response));
     } catch (e) {
@@ -93,10 +95,12 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
-  void deleteQuestion(String questionId, String eventId) async {
+  // Zones
+
+  void updateZoneStates(String eventId, String zoneNameToUpdate, bool status) async {
     emit(CreateQuestionLoading());
     try {
-      await repository.deleteQuestion(questionId);
+      await repository.updateZoneState(eventId, zoneNameToUpdate, status);
       Event response = await repository.getEvent(eventId);
       emit(SingleEventGetLoaded(response));
     } catch (e) {

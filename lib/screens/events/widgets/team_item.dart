@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class TeamItem extends StatelessWidget {
   final String name;
-  final int id;
 
   const TeamItem({
     super.key,
     required this.name,
-    required this.id,
   });
 
   @override
@@ -18,10 +16,7 @@ class TeamItem extends StatelessWidget {
       },
       child: Card(
         color: Colors.grey[200],
-        child: ListTile(
-          title: Text(name),
-          subtitle: Text('ID: $id'),
-        ),
+        child: ListTile(title: Text(name)),
       ),
     );
   }
