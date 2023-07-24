@@ -36,7 +36,7 @@ class _TeamDetailsState extends State<TeamDetails> {
               itemBuilder: (BuildContext context, int index) {
                 final teamMember = state.teamMembers[index];
                 return Card(
-                  color: Colors.grey[200],
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

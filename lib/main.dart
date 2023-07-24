@@ -56,8 +56,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.black,
           title: Text(
             'Backoffice'.toUpperCase(),
             style: const TextStyle(color: Colors.white),

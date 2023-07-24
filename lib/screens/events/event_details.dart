@@ -5,6 +5,7 @@ import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget
 import 'package:casualbear_backoffice/screens/events/widgets/event_info.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/question_item.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/team_item.dart';
+import 'package:casualbear_backoffice/widgets/event_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,7 +33,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(widget.event.selectedColor),
+        backgroundColor: Color(getColor(widget.event.selectedColor)),
         title: Text(
           widget.event.name,
           style: const TextStyle(
