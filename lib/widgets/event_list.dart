@@ -109,8 +109,8 @@ class _EventListState extends State<EventList> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 10),
           Row(
@@ -155,7 +155,7 @@ class _EventListState extends State<EventList> {
             children: [
               const SizedBox(width: 10),
               const Text(
-                'Date of Creation: ',
+                'Data Criação: ',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -221,7 +221,7 @@ class _EventListState extends State<EventList> {
             children: [
               const SizedBox(width: 10),
               const Text(
-                'Icone : ',
+                'Imagem : ',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
