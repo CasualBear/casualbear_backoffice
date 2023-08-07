@@ -2,6 +2,7 @@ import 'package:casualbear_backoffice/local_storage.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:casualbear_backoffice/repositories/authentication_repository.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
+import 'package:casualbear_backoffice/repositories/question_repository.dart';
 import 'package:casualbear_backoffice/screens/authentication/cubit/authentication_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/event_screen.dart';
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<EventCubit>(
-          create: (context) => EventCubit(EventRepository(ApiService.shared)),
+          create: (context) =>
+              EventCubit(EventRepository(ApiService.shared), QuestionRepository(apiService: ApiService.shared)),
         ),
         BlocProvider<AuthenticationCubit>(
           create: (context) => AuthenticationCubit(AuthenticationRepository(ApiService.shared)),

@@ -2,12 +2,14 @@ import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
+import 'package:casualbear_backoffice/repositories/question_repository.dart';
 import 'package:flutter/material.dart';
 part 'event_state.dart';
 
 class EventCubit extends Cubit<EventState> {
   final EventRepository repository;
-  EventCubit(this.repository) : super(EventInitial());
+  final QuestionRepository questionRepository;
+  EventCubit(this.repository, this.questionRepository) : super(EventInitial());
 
   // Event
 
@@ -66,7 +68,7 @@ class EventCubit extends Cubit<EventState> {
   void addQuestion(Question question, String eventId) async {
     emit(CreateQuestionLoading());
     try {
-      await repository.addQuestion(question, eventId);
+      await questionRepository.addQuestion(question, eventId);
       Event response = await repository.getEvent(eventId);
       emit(SingleEventGetLoaded(response));
     } catch (e) {
@@ -77,7 +79,7 @@ class EventCubit extends Cubit<EventState> {
   void updateQuestion(Question question, String eventId) async {
     emit(CreateQuestionLoading());
     try {
-      await repository.updateQuestion(question, eventId);
+      await questionRepository.updateQuestion(question, eventId);
       Event response = await repository.getEvent(eventId);
       emit(SingleEventGetLoaded(response));
     } catch (e) {
@@ -88,7 +90,7 @@ class EventCubit extends Cubit<EventState> {
   void deleteQuestion(String questionId, String eventId) async {
     emit(CreateQuestionLoading());
     try {
-      await repository.deleteQuestion(questionId);
+      await questionRepository.deleteQuestion(questionId);
       Event response = await repository.getEvent(eventId);
       emit(SingleEventGetLoaded(response));
     } catch (e) {

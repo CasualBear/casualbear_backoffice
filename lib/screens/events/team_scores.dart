@@ -9,7 +9,7 @@ class TeamScores extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Estatisticas das Equipas'),
+        title: const Text('Estatisticas das Equipas'),
       ),
       body: SingleChildScrollView(
         child: Padding(
