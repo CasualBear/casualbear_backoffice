@@ -62,3 +62,15 @@ class GetTeamMemberLoaded extends EventState {
 }
 
 class GetTeamMemberError extends EventState {}
+
+// Scores
+
+class GetScoresLoading extends EventState {}
+
+class GetScoresLoaded extends EventState {
+  final List<Score> scores;
+
+  GetScoresLoaded({required this.scores});
+}
+
+class GetScoresError extends EventState {}

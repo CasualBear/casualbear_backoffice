@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/score.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/repositories/question_repository.dart';
@@ -50,6 +51,16 @@ class EventCubit extends Cubit<EventState> {
       emit(SingleEventGetLoaded(response));
     } catch (e) {
       emit(EventGetError());
+    }
+  }
+
+  void getScores(String eventId) async {
+    emit(GetScoresLoading());
+    try {
+      List<Score> scores = await repository.getScores(eventId);
+      emit(GetScoresLoaded(scores: scores));
+    } catch (e) {
+      emit(GetScoresError());
     }
   }
 

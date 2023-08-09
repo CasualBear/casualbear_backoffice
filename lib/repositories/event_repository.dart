@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/score.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import '../network/services/api_error.dart';
@@ -60,17 +61,27 @@ class EventRepository {
       var listOfEvents = eventDataList.map((eventData) => Event.fromJson(eventData as Map<String, dynamic>)).toList();
       return listOfEvents;
     } catch (e) {
-      print(e);
       rethrow;
     }
   }
 
-  Future<Event> getEvent(String id) async {
+  Future<Event> getEvent(String eventId) async {
     try {
-      final response = await apiService.get('/api/event/events/$id');
+      final response = await apiService.get('/api/event/events/$eventId');
       var eventData = response.data['event'];
       var event = Event.fromJson(eventData as Map<String, dynamic>);
       return event;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Score>> getScores(String eventId) async {
+    try {
+      final response = await apiService.get('/api/answers/teams/event/$eventId');
+      var scoreDataList = List<dynamic>.from(response.data['teams']);
+      var scores = scoreDataList.map((eventData) => Score.fromJson(eventData as Map<String, dynamic>)).toList();
+      return scores;
     } catch (e) {
       print(e);
       rethrow;
@@ -81,7 +92,7 @@ class EventRepository {
     try {
       await apiService.delete('/api/event/events/$eventId');
     } catch (e) {
-      print(e);
+      rethrow;
     }
   }
 

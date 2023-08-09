@@ -1,9 +1,23 @@
+import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TeamScores extends StatelessWidget {
-  final List<Map<String, dynamic>> scoresData;
+class TeamScores extends StatefulWidget {
+  final int eventId;
+  const TeamScores({Key? key, required this.eventId}) : super(key: key);
 
-  const TeamScores({Key? key, required this.scoresData}) : super(key: key);
+  @override
+  State<TeamScores> createState() => _TeamScoresState();
+}
+
+class _TeamScoresState extends State<TeamScores> {
+  List<Map<String, dynamic>>? scoresData = [];
+
+  @override
+  void initState() {
+    BlocProvider.of<EventCubit>(context).getScores(widget.eventId.toString());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,64 +25,77 @@ class TeamScores extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Estatisticas das Equipas'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DataTable(
-                columnSpacing: 16.0,
-                headingRowHeight: 48.0,
-                dataRowHeight: 56.0,
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text(
-                      'Nome Equipa',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Pontos',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Tempo médio de resposta',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-                rows: scoresData.map((data) {
-                  return DataRow(
-                    cells: <DataCell>[
-                      DataCell(
-                        Text(
-                          data['teamId'],
-                          style: TextStyle(fontWeight: FontWeight.bold),
+      body: BlocConsumer<EventCubit, EventState>(
+        buildWhen: (previous, current) =>
+            current is GetScoresError || current is GetScoresLoading || current is GetScoresLoaded,
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is GetScoresLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is GetScoresLoaded) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DataTable(
+                      columnSpacing: 16.0,
+                      headingRowHeight: 48.0,
+                      dataRowHeight: 56.0,
+                      columns: const <DataColumn>[
+                        DataColumn(
+                          label: Text(
+                            'Nome Equipa',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                      DataCell(
-                        Text(
-                          data['currentScore'].toString(),
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        DataColumn(
+                          label: Text(
+                            'Pontos',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                      DataCell(
-                        Text(
-                          data['avgTimeOfAnswer'],
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        DataColumn(
+                          label: Text(
+                            'Tempo médio de resposta',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }).toList(),
+                      ],
+                      rows: state.scores.map((data) {
+                        return DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Text(
+                                data.teamId,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                data.correctAnswers.toString(),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                data.averageTime.toString(),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
+            );
+          } else {
+            return const Text('Error while loading scores');
+          }
+        },
       ),
     );
   }

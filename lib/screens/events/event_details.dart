@@ -89,12 +89,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           Navigator.push<void>(
                             context,
                             MaterialPageRoute<void>(
-                              builder: (BuildContext context) => TeamScores(scoresData: [
-                                {'teamId': 'Team 1', 'currentScore': 100, 'avgTimeOfAnswer': "22222"},
-                                {'teamId': 'Team 1', 'currentScore': 50, 'avgTimeOfAnswer': "22222"},
-                                {'teamId': 'Team 1', 'currentScore': 100, 'avgTimeOfAnswer': "22222"},
-                                // Add more team data here
-                              ]),
+                              builder: (BuildContext context) => TeamScores(eventId: widget.event.id),
                             ),
                           );
                         },

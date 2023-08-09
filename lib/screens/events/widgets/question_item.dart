@@ -143,7 +143,7 @@ class _QuestionItemState extends State<QuestionItem> {
                         secondHalf = parts[1].trim().replaceAll("answer:", "").replaceAll("}", "").trim();
                       }
 
-                      final answerText = secondHalf ?? 'No answer provided';
+                      final answerText = secondHalf;
                       return Text(
                         'Answer ${index + 1}: $answerText',
                         style: TextStyle(
