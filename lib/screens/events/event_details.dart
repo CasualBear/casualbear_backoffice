@@ -53,7 +53,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                EventInfoItem(event: state.event),
                 const SizedBox(height: 16),
                 const Text(
                   'Equipas dentro do Evento',
@@ -63,15 +62,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: state.event.teams?.length ?? 0,
-                  itemBuilder: (BuildContext context, int index) {
-                    return TeamItem(
-                      name: state.event.teams?[index] ?? '',
-                    );
-                  },
-                ),
+                state.event.teams!.isNotEmpty
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: state.event.teams?.length ?? 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          return TeamItem(
+                            name: state.event.teams?[index] ?? '',
+                          );
+                        },
+                      )
+                    : const Text("Sem equipas inscritas"),
                 const SizedBox(height: 16),
                 const Text(
                   'Informação em tempo real',

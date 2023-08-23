@@ -11,6 +11,8 @@ class TeamDetails extends StatefulWidget {
 }
 
 class _TeamDetailsState extends State<TeamDetails> {
+  bool membersVerified = false;
+  bool membersCheckedIn = false;
   @override
   void initState() {
     BlocProvider.of<EventCubit>(context).getUsersByTeam(widget.teamId.toString());
@@ -20,6 +22,34 @@ class _TeamDetailsState extends State<TeamDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 150),
+        child: Row(
+          children: [
+            Checkbox(
+              value: membersVerified,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  membersVerified = newValue ?? false;
+
+                  // TODO call api
+                });
+              },
+            ),
+            const Text('Equipa Verificada'),
+            const SizedBox(width: 5),
+            Checkbox(
+              value: membersCheckedIn,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  membersCheckedIn = newValue ?? false;
+                });
+              },
+            ),
+            const Text('Equipa Checked-In'),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text('Membros da Equipa'),
       ),
@@ -64,6 +94,7 @@ class _TeamDetailsState extends State<TeamDetails> {
                         Text('Phone: ${teamMember.phone}'),
                         const SizedBox(height: 8),
                         Text('Address: ${teamMember.address}'),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
