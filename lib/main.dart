@@ -3,8 +3,10 @@ import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:casualbear_backoffice/repositories/authentication_repository.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/repositories/question_repository.dart';
+import 'package:casualbear_backoffice/repositories/team_repository.dart';
 import 'package:casualbear_backoffice/screens/authentication/cubit/authentication_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
+import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +31,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<AuthenticationCubit>(
           create: (context) => AuthenticationCubit(AuthenticationRepository(ApiService.shared)),
+        ),
+        BlocProvider<TeamCubit>(
+          create: (context) => TeamCubit(TeamRepository(apiService: ApiService.shared)),
         ),
       ],
       child: MaterialApp(

@@ -16,10 +16,12 @@ class TeamMember {
   final String dateOfBirth;
   final String cc;
   final String phone;
+  final bool isVerified;
   final String address;
   final String email;
   final String nosCard;
   final String tShirtSize;
+  final bool isCheckedIn;
   final String teamId;
   final String createdAt;
   final String updatedAt;
@@ -32,6 +34,8 @@ class TeamMember {
     required this.cc,
     required this.phone,
     required this.address,
+    required this.isVerified,
+    required this.isCheckedIn,
     required this.email,
     required this.nosCard,
     required this.tShirtSize,
@@ -47,6 +51,8 @@ class TeamMember {
       name: json['name'],
       dateOfBirth: json['dateOfBirth'],
       cc: json['cc'],
+      isCheckedIn: json['isCheckedIn'],
+      isVerified: json['isVerified'],
       phone: json['phone'],
       address: json['address'],
       email: json['email'],
