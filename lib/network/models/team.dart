@@ -1,67 +1,40 @@
+import 'dart:convert';
+
+import 'package:casualbear_backoffice/network/models/user.dart';
+import 'package:casualbear_backoffice/network/models/zones.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'team.g.dart';
+
+@JsonSerializable()
 class Team {
-  final String teamId;
-
-  Team({required this.teamId});
-
-  factory Team.fromJson(Map<String, dynamic> json) {
-    return Team(
-      teamId: json['teamId'],
-    );
-  }
-}
-
-class TeamMember {
   final int id;
+  final int totalPoints;
   final String name;
-  final String dateOfBirth;
-  final String cc;
-  final String phone;
-  final bool isVerified;
-  final String address;
-  final String email;
-  final String nosCard;
-  final String tShirtSize;
-  final bool isCheckedIn;
-  final String teamId;
-  final String createdAt;
-  final String updatedAt;
+  final String isVerified;
+  final bool isCheckedOverall;
+  final List<Zones> zones;
+  final int timeSpent;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   final int eventId;
+  final List<User> members;
 
-  TeamMember({
+  Team({
     required this.id,
-    required this.name,
-    required this.dateOfBirth,
-    required this.cc,
-    required this.phone,
-    required this.address,
+    required this.totalPoints,
+    required this.timeSpent,
     required this.isVerified,
-    required this.isCheckedIn,
-    required this.email,
-    required this.nosCard,
-    required this.tShirtSize,
-    required this.teamId,
+    required this.name,
+    required this.members,
+    required this.isCheckedOverall,
+    required this.zones,
     required this.createdAt,
     required this.updatedAt,
     required this.eventId,
   });
 
-  factory TeamMember.fromJson(Map<String, dynamic> json) {
-    return TeamMember(
-      id: json['id'],
-      name: json['name'],
-      dateOfBirth: json['dateOfBirth'],
-      cc: json['cc'],
-      isCheckedIn: json['isCheckedIn'],
-      isVerified: json['isVerified'],
-      phone: json['phone'],
-      address: json['address'],
-      email: json['email'],
-      nosCard: json['nosCard'],
-      tShirtSize: json['tShirtSize'],
-      teamId: json['teamId'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      eventId: json['event_id'],
-    );
-  }
+  factory Team.fromJson(Map<String, dynamic> json) => _$TeamFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TeamToJson(this);
 }

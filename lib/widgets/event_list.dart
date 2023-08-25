@@ -181,14 +181,14 @@ class _EventListState extends State<EventList> {
                 ),
                 children: [
                   TextSpan(
-                    text: 'https://cblandingpage.web.app#eventId=${event.id}',
+                    text: 'https://cblandingpage.web.app/#/',
                     style: const TextStyle(
                       decoration: TextDecoration.underline,
                       color: Colors.blue,
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        launch('https://cblandingpage.web.app#eventId=${event.id}');
+                        launch('https://cblandingpage.web.app/#/');
                       },
                   ),
                 ],

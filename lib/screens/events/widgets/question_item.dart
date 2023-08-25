@@ -1,4 +1,5 @@
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
@@ -30,10 +31,6 @@ class _QuestionItemState extends State<QuestionItem> {
   @override
   void initState() {
     _questionController = TextEditingController(text: widget.question.question);
-    _answerControllers = List.generate(
-      widget.question.answers?.length ?? 0,
-      (index) => TextEditingController(text: widget.question.answers?[index] ?? ''),
-    );
     super.initState();
   }
 
@@ -115,7 +112,7 @@ class _QuestionItemState extends State<QuestionItem> {
                   ],
                 ),
               ),
-              widget.question.answers!.isNotEmpty
+              widget.question.answers.isNotEmpty
                   ? Text(
                       'Correct Answer Index: ${widget.question.correctAnswerIndex}',
                       style: TextStyle(
@@ -125,36 +122,13 @@ class _QuestionItemState extends State<QuestionItem> {
                     )
                   : Container(),
               const SizedBox(height: 16),
-              widget.question.answers!.isEmpty
+              widget.question.answers.isEmpty
                   ? const Text(
                       'This is a challenge question',
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                     )
                   : const Text('Answers:'),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.question.answers?.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final answer = entry.value;
-                      final isCorrectAnswer = index == widget.question.correctAnswerIndex;
-                      List<String> parts = answer.split(",");
-                      String secondHalf = "";
-                      if (parts.length >= 2) {
-                        secondHalf = parts[1].trim().replaceAll("answer:", "").replaceAll("}", "").trim();
-                      }
-
-                      final answerText = secondHalf;
-                      return Text(
-                        'Answer ${index + 1}: $answerText',
-                        style: TextStyle(
-                          fontWeight: isCorrectAnswer ? FontWeight.bold : FontWeight.normal,
-                          color: isCorrectAnswer ? Colors.green : null,
-                          fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
-                        ),
-                      );
-                    }).toList() ??
-                    [],
-              ),
+              // TODO create list of answers here from question
             ],
           ),
           trailing: Row(

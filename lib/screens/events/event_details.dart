@@ -1,6 +1,7 @@
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/question.dart';
+import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
-import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:casualbear_backoffice/screens/events/team_scores.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget.dart';
@@ -63,12 +64,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                state.event.teams!.isNotEmpty
+                state.event.teamMembers!.isNotEmpty
                     ? ListView.builder(
                         shrinkWrap: true,
-                        itemCount: state.event.teams?.length ?? 0,
+                        itemCount: state.event.teamMembers!.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return _buildTeamItem(state.event.teams?[index] ?? '', index);
+                          return _buildTeamItem(state.event.teamMembers![index]);
                         },
                       )
                     : const Text("Sem equipas inscritas"),
@@ -116,7 +117,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Column(
+                /*Column(
                   children: state.event.zones
                       .map((zone) => Card(
                             child: ListTile(
@@ -135,7 +136,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             ),
                           ))
                       .toList(),
-                ),
+                ),*/
                 const SizedBox(height: 10),
                 _buildQuestionTitle(),
                 const SizedBox(height: 16),
@@ -145,7 +146,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   itemCount: state.event.questions.length,
                   itemBuilder: (context, index) {
                     final question = state.event.questions[index];
-                    final answers = question.answers ?? [];
+                    final answers = question.answers;
                     final correctAnswerIndex =
                         question.correctAnswerIndex < answers.length ? question.correctAnswerIndex : 0;
 
@@ -159,6 +160,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       answers: answers,
                       correctAnswerIndex: correctAnswerIndex,
                       eventId: state.event.id,
+                      createdAt: '',
+                      points: 0,
+                      updatedAt: '',
                     );
 
                     return Column(
@@ -188,60 +192,43 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  _buildTeamItem(String name, int index) {
-    BlocProvider.of<EventCubit>(context).getUsersByTeam(name);
-
-    return BlocConsumer<EventCubit, EventState>(
-      buildWhen: (previous, current) =>
-          current is GetTeamMemberLoading || current is GetTeamMemberLoaded || current is GetTeamMemberError,
-      listener: (context, membersState) {},
-      builder: (context, membersState) {
-        if (membersState is GetTeamMemberLoading) {
-          return const CircularProgressIndicator();
-        } else if (membersState is GetTeamMemberLoaded) {
-          return GestureDetector(
-            onTap: () async {
-              await Navigator.push<void>(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => TeamDetails(
-                    teamId: name,
-                    isCheckedin: membersState.teamMembers[index].isCheckedIn,
-                    isVerified: membersState.teamMembers[index].isVerified,
-                  ),
-                ),
-              );
-
-              // ignore: use_build_context_synchronously
-              BlocProvider.of<EventCubit>(context).getEvent(widget.event.id.toString());
-            },
-            child: Card(
-              color: Colors.grey[200],
-              child: ListTile(
-                title: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text('Nome da equipa: ',
-                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 5),
-                          Text(name),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Text(!membersState.teamMembers[index].isVerified ? 'Not Verified ⛔️' : 'Verified ✅'),
-                      const SizedBox(height: 5),
-                      Text(!membersState.teamMembers[index].isCheckedIn ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
-                    ]),
-                trailing: const Icon(Icons.arrow_forward),
-              ),
+  _buildTeamItem(Team team) {
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.push<void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => TeamDetails(
+              team: team,
             ),
-          );
-        }
-        return Container();
+          ),
+        );
+
+        // ignore: use_build_context_synchronously
+        BlocProvider.of<EventCubit>(context).getEvent(widget.event.id.toString());
       },
+      child: Card(
+        color: Colors.grey[200],
+        child: ListTile(
+          title: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text('Nome da equipa: ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
+                    Text(team.name),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Text(!team.members[0].isCheckedIn ? 'Not Verified ⛔️' : 'Verified ✅'),
+                const SizedBox(height: 5),
+                Text(!team.members[0].isVerified ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
+              ]),
+          trailing: const Icon(Icons.arrow_forward),
+        ),
+      ),
     );
   }
 

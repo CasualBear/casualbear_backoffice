@@ -1,4 +1,6 @@
+import 'package:casualbear_backoffice/network/models/answer.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
@@ -22,7 +24,7 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
   late TextEditingController _questionController;
   late TextEditingController _locationController;
   late LatLong questionCoordinates;
-  Zone? selectedZone;
+//  Zone? selectedZone;
 
   bool _isChallenge = false;
 
@@ -36,17 +38,6 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
     _questionController = TextEditingController();
     _locationController = TextEditingController();
     _answerControllers.add(TextEditingController());
-  }
-
-  List<String> _getAnswers() {
-    List<String> answers = [];
-    for (var controller in _answerControllers) {
-      final answer = controller.text.trim();
-      if (answer.isNotEmpty) {
-        answers.add(answer);
-      }
-    }
-    return answers;
   }
 
   @override
@@ -119,13 +110,13 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
               },
               readOnly: true,
             ),
-            Row(
+            const Row(
               children: [
-                const Text(
+                Text(
                   'Zone: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Expanded(
+                /*  Expanded(
                   child: DropdownButtonFormField(
                     value: selectedZone,
                     onChanged: (value) {
@@ -140,7 +131,7 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
                       );
                     }).toList(),
                   ),
-                ),
+                )*/
               ],
             ),
             const SizedBox(height: 10),
@@ -234,18 +225,18 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              List<String> answers = !_isChallenge ? _getAnswers() : [];
+              List<Answer> answers = [];
 
               Question question = Question(
                 id: 1, // backend ignores this
                 question: _questionController.text,
-                answers: answers.isNotEmpty ? answers : [],
+                answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
-                zone: selectedZone?.name ?? 'ZoneA',
+                zone: 'ZoneA',
                 latitude: questionCoordinates.latitude.toString(),
                 longitude: questionCoordinates.longitude.toString(),
                 address: _locationController.text,
-                eventId: widget.event.id,
+                eventId: widget.event.id, createdAt: '', points: 0, updatedAt: '',
               );
 
               widget.onAddQuestion(question);

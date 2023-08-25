@@ -1,15 +1,15 @@
 class UpdateTeamRequest {
-  int id;
+  int userId;
   bool isVerified;
   bool isCheckedIn;
 
-  UpdateTeamRequest({required this.id, required this.isCheckedIn, required this.isVerified});
+  UpdateTeamRequest({required this.userId, required this.isCheckedIn, required this.isVerified});
 
   factory UpdateTeamRequest.fromJson(Map<String, dynamic> json) {
-    return UpdateTeamRequest(id: json['id'], isVerified: json['isVerified'], isCheckedIn: json['isCheckedIn']);
+    return UpdateTeamRequest(userId: json['userId'], isVerified: json['isVerified'], isCheckedIn: json['isCheckedIn']);
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'isVerified': isVerified, 'isCheckedIn': isCheckedIn};
+    return {'userId': userId, 'isVerified': isVerified, 'isCheckedIn': isCheckedIn};
   }
 }

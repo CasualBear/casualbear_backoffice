@@ -14,7 +14,7 @@ class TeamRepository {
   Future<void> updateTeam(List<UpdateTeamRequest> updateTeamRequest) async {
     final body = jsonEncode(updateTeamRequest);
     try {
-      await apiService.put('/api/event/team-members', body: body);
+      await apiService.put('/api/teams/users', body: body);
     } on DioException catch (e) {
       if (e.response != null) {
         throw ApiError.fromJson(e.response!.data['error']);

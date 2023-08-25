@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/models/score.dart';
-import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/repositories/question_repository.dart';
 import 'package:flutter/material.dart';
@@ -119,17 +119,6 @@ class EventCubit extends Cubit<EventState> {
       emit(SingleEventGetLoaded(response));
     } catch (e) {
       emit(CreateQuestionError());
-    }
-  }
-
-  // Team
-  void getUsersByTeam(String teamId) async {
-    emit(GetTeamMemberLoading());
-    try {
-      List<TeamMember> response = await repository.getUsersByTeam(teamId);
-      emit(GetTeamMemberLoaded(teamMembers: response));
-    } catch (e) {
-      emit(GetTeamMemberError());
     }
   }
 }

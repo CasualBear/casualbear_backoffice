@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/services/api_error.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:dio/dio.dart';
