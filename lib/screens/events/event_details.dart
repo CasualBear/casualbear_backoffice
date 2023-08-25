@@ -64,12 +64,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                state.event.teamMembers!.isNotEmpty
+                state.event.teams?.isNotEmpty ?? false
                     ? ListView.builder(
                         shrinkWrap: true,
-                        itemCount: state.event.teamMembers!.length,
+                        itemCount: state.event.teams!.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return _buildTeamItem(state.event.teamMembers![index]);
+                          return _buildTeamItem(state.event.teams![index]);
                         },
                       )
                     : const Text("Sem equipas inscritas"),
@@ -109,34 +109,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Gestão de Zonas - ',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                /*Column(
-                  children: state.event.zones
-                      .map((zone) => Card(
-                            child: ListTile(
-                              title: Text(zone.name),
-                              trailing: Switch(
-                                value: zone.active,
-                                onChanged: (value) {
-                                  setState(() {
-                                    zone.active = value;
-                                  });
-
-                                  BlocProvider.of<EventCubit>(context)
-                                      .updateZoneStates(widget.event.id.toString(), zone.name, zone.active);
-                                },
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                ),*/
                 const SizedBox(height: 10),
                 _buildQuestionTitle(),
                 const SizedBox(height: 16),
@@ -222,9 +194,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                Text(!team.members[0].isCheckedIn ? 'Not Verified ⛔️' : 'Verified ✅'),
+                Text(team.isVerified),
                 const SizedBox(height: 5),
-                Text(!team.members[0].isVerified ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
+                Text(team.isCheckedOverall ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
               ]),
           trailing: const Icon(Icons.arrow_forward),
         ),

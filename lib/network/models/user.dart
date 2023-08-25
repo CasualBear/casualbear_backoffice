@@ -17,9 +17,6 @@ class User {
   final String tShirtSize;
   final bool isCheckedPrivacyData;
   final bool isCheckedTermsConditions;
-  final bool isCheckedOverall;
-  final bool isVerified;
-  final bool isCheckedIn;
   final bool isCaptain;
   final String teamId;
   final DateTime createdAt;
@@ -39,9 +36,6 @@ class User {
     required this.tShirtSize,
     required this.isCheckedPrivacyData,
     required this.isCheckedTermsConditions,
-    required this.isCheckedOverall,
-    required this.isVerified,
-    required this.isCheckedIn,
     required this.isCaptain,
     required this.teamId,
     required this.createdAt,

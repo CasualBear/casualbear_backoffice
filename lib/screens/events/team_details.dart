@@ -4,6 +4,8 @@ import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'cubit/event_cubit.dart';
+
 class TeamDetails extends StatefulWidget {
   final Team team;
   const TeamDetails({super.key, required this.team});
@@ -13,13 +15,13 @@ class TeamDetails extends StatefulWidget {
 }
 
 class _TeamDetailsState extends State<TeamDetails> {
-  bool memberVerified = false;
+  String memberVerified = '';
   bool memberCheckedIn = false;
 
   @override
   void initState() {
-    memberVerified = widget.team.members[0].isVerified;
-    memberCheckedIn = widget.team.members[0].isCheckedIn;
+    memberVerified = '';
+    memberCheckedIn = widget.team.isCheckedIn;
     super.initState();
   }
 
@@ -31,24 +33,37 @@ class _TeamDetailsState extends State<TeamDetails> {
         ),
         body: Column(
           children: [
+            const Text(
+              'Gestão de Zonas - ',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            //TODO transformar string em json array
+            /*Column(
+              children: widget.team.zones
+                  .map((zone) => Card(
+                        child: ListTile(
+                          title: Text(zone.name),
+                          trailing: Switch(
+                            value: zone.active,
+                            onChanged: (value) {
+                              setState(() {
+                                zone.active = value;
+                              });
+
+                              /*BlocProvider.of<EventCubit>(context)
+                                  .updateZoneStates(widget.team.id, zone.name, zone.active);*/
+                            },
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),*/
             Row(
               children: [
-                Checkbox(
-                  value: memberVerified,
-                  onChanged: (bool? newValue) {
-                    memberVerified = newValue ?? false;
-                    List<UpdateTeamRequest> updatedFlags = [];
-
-                    for (var element in widget.team.members) {
-                      updatedFlags.add(UpdateTeamRequest(
-                          userId: element.id, isCheckedIn: memberCheckedIn, isVerified: memberVerified));
-                    }
-
-                    BlocProvider.of<TeamCubit>(context).updateTeamValidationAndCheckin(updatedFlags);
-                  },
-                ),
-                const Text('Verificar Equipa'),
-                const SizedBox(width: 5),
                 Checkbox(
                   value: memberCheckedIn,
                   onChanged: (bool? newValue) {
@@ -56,8 +71,8 @@ class _TeamDetailsState extends State<TeamDetails> {
                     List<UpdateTeamRequest> updatedFlags = [];
 
                     for (var element in widget.team.members) {
-                      updatedFlags.add(UpdateTeamRequest(
-                          userId: element.id, isCheckedIn: memberCheckedIn, isVerified: memberVerified));
+                      updatedFlags.add(
+                          UpdateTeamRequest(userId: element.id, isCheckedIn: memberCheckedIn, isVerified: 'Approved'));
                     }
 
                     BlocProvider.of<TeamCubit>(context).updateTeamValidationAndCheckin(updatedFlags);

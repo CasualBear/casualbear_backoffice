@@ -5,7 +5,7 @@ part 'zones.g.dart';
 @JsonSerializable()
 class Zones {
   final String name;
-  final bool active;
+  bool active;
 
   Zones({required this.name, required this.active});
 

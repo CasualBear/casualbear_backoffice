@@ -14,7 +14,7 @@ class Event {
   final String createdAt;
   final String updatedAt;
   final List<Question> questions;
-  final List<Team>? teamMembers;
+  final List<Team>? teams;
 
   Event({
     required this.id,
@@ -22,7 +22,7 @@ class Event {
     required this.description,
     required this.selectedColor,
     required this.rawUrl,
-    required this.teamMembers,
+    required this.teams,
     required this.createdAt,
     required this.updatedAt,
     required this.questions,

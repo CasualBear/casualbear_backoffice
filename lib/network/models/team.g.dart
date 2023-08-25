@@ -10,15 +10,14 @@ Team _$TeamFromJson(Map<String, dynamic> json) => Team(
       id: json['id'] as int,
       totalPoints: json['totalPoints'] as int,
       timeSpent: json['timeSpent'] as int,
+      isCheckedIn: json['isCheckedIn'] as bool,
       isVerified: json['isVerified'] as String,
       name: json['name'] as String,
       members: (json['members'] as List<dynamic>)
           .map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
       isCheckedOverall: json['isCheckedOverall'] as bool,
-      zones: (json['zones'] as List<dynamic>)
-          .map((e) => Zones.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      zones: json['zones'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       eventId: json['eventId'] as int,
@@ -29,6 +28,7 @@ Map<String, dynamic> _$TeamToJson(Team instance) => <String, dynamic>{
       'totalPoints': instance.totalPoints,
       'name': instance.name,
       'isVerified': instance.isVerified,
+      'isCheckedIn': instance.isCheckedIn,
       'isCheckedOverall': instance.isCheckedOverall,
       'zones': instance.zones,
       'timeSpent': instance.timeSpent,

@@ -1,6 +1,6 @@
 class UpdateTeamRequest {
   int userId;
-  bool isVerified;
+  String isVerified;
   bool isCheckedIn;
 
   UpdateTeamRequest({required this.userId, required this.isCheckedIn, required this.isVerified});

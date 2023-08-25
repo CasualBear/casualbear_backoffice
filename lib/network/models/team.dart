@@ -12,8 +12,9 @@ class Team {
   final int totalPoints;
   final String name;
   final String isVerified;
+  final bool isCheckedIn;
   final bool isCheckedOverall;
-  final List<Zones> zones;
+  final String zones;
   final int timeSpent;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -24,6 +25,7 @@ class Team {
     required this.id,
     required this.totalPoints,
     required this.timeSpent,
+    required this.isCheckedIn,
     required this.isVerified,
     required this.name,
     required this.members,
