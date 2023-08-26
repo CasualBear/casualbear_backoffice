@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:casualbear_backoffice/network/models/answer.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
+import 'package:casualbear_backoffice/network/models/question_request.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
 class AddQuestionDialog extends StatefulWidget {
   final Event event;
-  final Function(Question question) onAddQuestion;
+  final Function(QuestionRequest question) onAddQuestion;
 
   const AddQuestionDialog({
     Key? key,
@@ -237,12 +238,12 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              List<Answer> answers = [];
+              List<Answer> answers = !_isChallenge ? _getAnswers() : [];
 
-              Question question = Question(
+              QuestionRequest question = QuestionRequest(
                 id: 1, // backend ignores this
                 question: _questionController.text,
-                Answers: answers,
+                answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
                 zone: 'ZoneA',
                 latitude: questionCoordinates.latitude.toString(),
@@ -259,6 +260,17 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ),
       ],
     );
+  }
+
+  List<Answer> _getAnswers() {
+    List<Answer> answers = [];
+    for (var controller in _answerControllers) {
+      final answer = controller.text.trim();
+      if (answer.isNotEmpty) {
+        answers.add(Answer(answer: answer));
+      }
+    }
+    return answers;
   }
 
   List<Zones> parseZones(String jsonString) {

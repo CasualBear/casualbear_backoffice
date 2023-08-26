@@ -1,5 +1,6 @@
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
+import 'package:casualbear_backoffice/network/models/question_request.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/team_details.dart';
@@ -25,7 +26,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     super.initState();
   }
 
-  void addQuestion(Question question) {
+  void addQuestion(QuestionRequest question) {
     BlocProvider.of<EventCubit>(context).addQuestion(question, widget.event.id.toString());
   }
 
@@ -118,8 +119,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   itemCount: state.event.questions.length,
                   itemBuilder: (context, index) {
                     final question = state.event.questions[index];
-                    final answers = question.Answers;
-                    final correctAnswerIndex = question.correctAnswerIndex ?? 0;
+                    final answers = question.answers;
+                    final correctAnswerIndex = question.correctAnswerIndex;
 
                     Question questionDTO = Question(
                       id: question.id,
@@ -128,7 +129,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       address: question.address,
                       zone: question.zone,
                       question: question.question,
-                      Answers: answers,
+                      answers: answers,
                       correctAnswerIndex: correctAnswerIndex,
                       eventId: state.event.id,
                       createdAt: '',

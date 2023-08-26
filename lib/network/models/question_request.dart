@@ -1,10 +1,10 @@
 import 'package:casualbear_backoffice/network/models/answer.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'question.g.dart';
+part 'question_request.g.dart';
 
 @JsonSerializable()
-class Question {
+class QuestionRequest {
   final int id;
   final String question;
   final List<Answer>? answers;
@@ -18,7 +18,7 @@ class Question {
   final String updatedAt;
   final int eventId;
 
-  Question({
+  QuestionRequest({
     required this.id,
     required this.question,
     required this.answers,
@@ -33,7 +33,7 @@ class Question {
     required this.eventId,
   });
 
-  factory Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
+  factory QuestionRequest.fromJson(Map<String, dynamic> json) => _$QuestionRequestFromJson(json);
 
-  Map<String, dynamic> toJson() => _$QuestionToJson(this);
+  Map<String, dynamic> toJson() => _$QuestionRequestToJson(this);
 }

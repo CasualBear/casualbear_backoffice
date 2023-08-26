@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'question.dart';
+part of 'question_request.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Question _$QuestionFromJson(Map<String, dynamic> json) => Question(
+QuestionRequest _$QuestionRequestFromJson(Map<String, dynamic> json) =>
+    QuestionRequest(
       id: json['id'] as int,
       question: json['question'] as String,
       answers: (json['answers'] as List<dynamic>?)
@@ -23,7 +24,8 @@ Question _$QuestionFromJson(Map<String, dynamic> json) => Question(
       eventId: json['eventId'] as int,
     );
 
-Map<String, dynamic> _$QuestionToJson(Question instance) => <String, dynamic>{
+Map<String, dynamic> _$QuestionRequestToJson(QuestionRequest instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'question': instance.question,
       'answers': instance.answers,

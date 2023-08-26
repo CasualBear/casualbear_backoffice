@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
+import 'package:casualbear_backoffice/network/models/question_request.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/repositories/question_repository.dart';
@@ -76,7 +77,7 @@ class EventCubit extends Cubit<EventState> {
 
   // Question
 
-  void addQuestion(Question question, String eventId) async {
+  void addQuestion(QuestionRequest question, String eventId) async {
     emit(CreateQuestionLoading());
     try {
       await questionRepository.addQuestion(question, eventId);

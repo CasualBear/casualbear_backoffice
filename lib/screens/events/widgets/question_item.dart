@@ -1,3 +1,4 @@
+import 'package:casualbear_backoffice/network/models/answer.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +113,7 @@ class _QuestionItemState extends State<QuestionItem> {
                   ],
                 ),
               ),
-              widget.question.Answers?.isNotEmpty ?? false
+              widget.question.answers?.isNotEmpty ?? false
                   ? Text(
                       'Correct Answer Index: ${widget.question.correctAnswerIndex}',
                       style: TextStyle(
@@ -122,13 +123,28 @@ class _QuestionItemState extends State<QuestionItem> {
                     )
                   : Container(),
               const SizedBox(height: 16),
-              widget.question.Answers?.isEmpty ?? false
+              widget.question.answers?.isEmpty ?? false
                   ? const Text(
                       'This is a challenge question',
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                     )
                   : const Text('Answers:'),
-              // TODO create list of answers here from question
+              SizedBox(
+                height: 300,
+                child: ListView.builder(
+                  itemCount: widget.question.answers?.length,
+                  itemBuilder: (context, index) {
+                    Answer? answer = widget.question.answers?[index];
+                    return ListTile(
+                      title: Text(
+                        '$index:${answer?.answer}',
+                        style:
+                            TextStyle(color: widget.question.correctAnswerIndex == index ? Colors.green : Colors.black),
+                      ),
+                    );
+                  },
+                ),
+              )
             ],
           ),
           trailing: Row(

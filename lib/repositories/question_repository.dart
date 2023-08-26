@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:casualbear_backoffice/network/models/question.dart';
+import 'package:casualbear_backoffice/network/models/question_request.dart';
 import 'package:casualbear_backoffice/network/services/api_error.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:dio/dio.dart';
@@ -9,7 +10,7 @@ class QuestionRepository {
 
   QuestionRepository({required this.apiService});
 
-  Future<void> addQuestion(Question question, String eventId) async {
+  Future<void> addQuestion(QuestionRequest question, String eventId) async {
     try {
       await apiService.post('/api/event/events/$eventId/questions', body: question);
     } on DioException catch (e) {
