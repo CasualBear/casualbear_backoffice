@@ -112,7 +112,7 @@ class _QuestionItemState extends State<QuestionItem> {
                   ],
                 ),
               ),
-              widget.question.answers.isNotEmpty
+              widget.question.Answers?.isNotEmpty ?? false
                   ? Text(
                       'Correct Answer Index: ${widget.question.correctAnswerIndex}',
                       style: TextStyle(
@@ -122,7 +122,7 @@ class _QuestionItemState extends State<QuestionItem> {
                     )
                   : Container(),
               const SizedBox(height: 16),
-              widget.question.answers.isEmpty
+              widget.question.Answers?.isEmpty ?? false
                   ? const Text(
                       'This is a challenge question',
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),

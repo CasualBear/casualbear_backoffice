@@ -118,9 +118,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   itemCount: state.event.questions.length,
                   itemBuilder: (context, index) {
                     final question = state.event.questions[index];
-                    final answers = question.answers;
-                    final correctAnswerIndex =
-                        question.correctAnswerIndex < answers.length ? question.correctAnswerIndex : 0;
+                    final answers = question.Answers;
+                    final correctAnswerIndex = question.correctAnswerIndex ?? 0;
 
                     Question questionDTO = Question(
                       id: question.id,
@@ -129,7 +128,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       address: question.address,
                       zone: question.zone,
                       question: question.question,
-                      answers: answers,
+                      Answers: answers,
                       correctAnswerIndex: correctAnswerIndex,
                       eventId: state.event.id,
                       createdAt: '',

@@ -9,8 +9,8 @@ part of 'question.dart';
 Question _$QuestionFromJson(Map<String, dynamic> json) => Question(
       id: json['id'] as int,
       question: json['question'] as String,
-      answers: (json['answers'] as List<dynamic>)
-          .map((e) => Answer.fromJson(e as Map<String, dynamic>))
+      Answers: (json['Answers'] as List<dynamic>?)
+          ?.map((e) => Answer.fromJson(e as Map<String, dynamic>))
           .toList(),
       correctAnswerIndex: json['correctAnswerIndex'] as int,
       points: json['points'] as int,
@@ -26,7 +26,7 @@ Question _$QuestionFromJson(Map<String, dynamic> json) => Question(
 Map<String, dynamic> _$QuestionToJson(Question instance) => <String, dynamic>{
       'id': instance.id,
       'question': instance.question,
-      'answers': instance.answers,
+      'Answers': instance.Answers,
       'correctAnswerIndex': instance.correctAnswerIndex,
       'points': instance.points,
       'zone': instance.zone,

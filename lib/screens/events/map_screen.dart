@@ -17,7 +17,9 @@ class MapScreen extends StatelessWidget {
             selectLocationButtonStyle: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.blue),
             ),
+            selectedLocationButtonTextstyle: const TextStyle(fontSize: 18),
             selectLocationButtonText: 'Set Current Location',
+            selectLocationButtonLeadingIcon: const Icon(Icons.check),
             initZoom: 11,
             minZoomLevel: 5,
             maxZoomLevel: 16,

@@ -7,7 +7,7 @@ part 'question.g.dart';
 class Question {
   final int id;
   final String question;
-  final List<Answer> answers;
+  final List<Answer>? Answers;
   final int correctAnswerIndex;
   final int points;
   final String zone;
@@ -21,7 +21,7 @@ class Question {
   Question({
     required this.id,
     required this.question,
-    required this.answers,
+    required this.Answers,
     required this.correctAnswerIndex,
     required this.points,
     required this.zone,

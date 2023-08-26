@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:casualbear_backoffice/network/models/answer.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
+import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/screens/events/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
@@ -24,12 +27,19 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
   late TextEditingController _questionController;
   late TextEditingController _locationController;
   late LatLong questionCoordinates;
-//  Zone? selectedZone;
+  String? selectedZone;
 
   bool _isChallenge = false;
 
   final List<TextEditingController> _answerControllers = [];
   int _correctAnswerIndex = 0;
+  List<String> zones = [
+    'ZoneA',
+    'ZoneB',
+    'ZoneC',
+    'ZoneD',
+    'ZoneE',
+  ];
 
   @override
   void initState() {
@@ -38,6 +48,8 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
     _questionController = TextEditingController();
     _locationController = TextEditingController();
     _answerControllers.add(TextEditingController());
+
+    selectedZone = zones[0];
   }
 
   @override
@@ -94,8 +106,8 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
               decoration: const InputDecoration(
                 labelText: 'Location',
               ),
-              onTap: () {
-                Navigator.push<String?>(
+              onTap: () async {
+                await Navigator.push<String?>(
                   context,
                   MaterialPageRoute(
                     builder: (context) => MapScreen(
@@ -110,13 +122,13 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
               },
               readOnly: true,
             ),
-            const Row(
+            Row(
               children: [
-                Text(
+                const Text(
                   'Zone: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                /*  Expanded(
+                Expanded(
                   child: DropdownButtonFormField(
                     value: selectedZone,
                     onChanged: (value) {
@@ -124,14 +136,14 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
                         selectedZone = value;
                       });
                     },
-                    items: widget.event.zones.map((zone) {
+                    items: zones.map((zone) {
                       return DropdownMenuItem(
                         value: zone,
-                        child: Text(zone.name + (zone.active ? ' (Unlocked)' : ' (Locked)')),
+                        child: Text(zone),
                       );
                     }).toList(),
                   ),
-                )*/
+                )
               ],
             ),
             const SizedBox(height: 10),
@@ -230,7 +242,7 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
               Question question = Question(
                 id: 1, // backend ignores this
                 question: _questionController.text,
-                answers: answers,
+                Answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
                 zone: 'ZoneA',
                 latitude: questionCoordinates.latitude.toString(),
@@ -247,5 +259,10 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
         ),
       ],
     );
+  }
+
+  List<Zones> parseZones(String jsonString) {
+    final parsed = json.decode(jsonString).cast<Map<String, dynamic>>();
+    return parsed.map<Zones>((json) => Zones(active: json['active'], name: json['name'])).toList();
   }
 }
