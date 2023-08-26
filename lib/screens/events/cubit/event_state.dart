@@ -56,7 +56,7 @@ class CreateQuestionError extends EventState {}
 class GetScoresLoading extends EventState {}
 
 class GetScoresLoaded extends EventState {
-  final List<Score> scores;
+  final List<Team> scores;
 
   GetScoresLoaded({required this.scores});
 }

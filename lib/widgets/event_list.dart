@@ -39,28 +39,17 @@ class _EventListState extends State<EventList> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 40, left: 30),
+      padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Text('Add Event'.toUpperCase(), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-            const SizedBox(width: 10),
-            SizedBox(
-              height: 30,
-              child: FloatingActionButton(
-                  backgroundColor: Colors.black,
-                  child: const Text(
-                    '+',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    addOrEditItemToList(null);
-                  }),
-            )
-          ]),
-          const SizedBox(height: 5),
+          const Text("Eventos",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  decoration: TextDecoration.underline)),
           BlocConsumer<EventCubit, EventState>(
             buildWhen: (previous, current) =>
                 current is EventGetLoading || current is EventGetLoaded || current is EventGetError,
@@ -79,19 +68,13 @@ class _EventListState extends State<EventList> {
                 return state.events.isEmpty
                     ? const Text('No events created, press + to create one')
                     : Expanded(
-                        child: GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 400,
-                            crossAxisSpacing: 1,
-                            mainAxisSpacing: 2,
-                          ),
-                          itemCount: state.events.length,
-                          itemBuilder: (context, index) {
-                            Event event = state.events[index];
-                            return _buildListItem(event);
-                          },
-                        ),
-                      );
+                        child: ListView.builder(
+                        itemCount: state.events.length,
+                        itemBuilder: (context, index) {
+                          Event event = state.events[index];
+                          return _buildListItem(event);
+                        },
+                      ));
               }
 
               return Container();
@@ -108,217 +91,124 @@ class _EventListState extends State<EventList> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const SizedBox(width: 10),
-              const Text(
-                'Nome: ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                event.name,
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const SizedBox(width: 10),
-              const Text(
-                'Descrição: ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                event.description,
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const SizedBox(width: 10),
-              const Text(
-                'Data Criação: ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                event.createdAt.toString(),
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Text.rich(
-              TextSpan(
-                text: 'Website ',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                children: [
-                  TextSpan(
-                    text: 'https://cblandingpage.web.app/#/',
-                    style: const TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.blue,
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        launch('https://cblandingpage.web.app/#/');
-                      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                const Text(
+                  'Nome Evento: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
+                ),
+                Text(
+                  event.name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                const Text(
+                  'Descrição: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  event.description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                const Text(
+                  'Data Criação: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  event.createdAt.toString(),
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text.rich(
+                TextSpan(
+                  text: 'Website: ',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'https://cblandingpage.web.app/#/',
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.blue,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launch('https://cblandingpage.web.app/#/');
+                        },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const SizedBox(width: 10),
-              const Text(
-                'Cor ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(getColor(event.selectedColor)),
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const SizedBox(width: 10),
-              const Text(
-                'Imagem : ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Image.network(event.rawUrl, width: 100)
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  addOrEditItemToList(event);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Editar',
-                        style:
-                            TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
-                      ),
-                      const SizedBox(width: 5),
-                      Icon(Icons.edit, color: Theme.of(context).primaryColor, size: 20)
-                    ],
+            const SizedBox(height: 10),
+            GestureDetector(
+              onTap: () {
+                Navigator.push<void>(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => EventDetailsScreen(event: event),
                   ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  BlocProvider.of<EventCubit>(context).deleteEvent(event.id.toString());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      BlocConsumer<EventCubit, EventState>(
-                        listenWhen: (previous, current) => current is EventDeleteError || current is EventDeleteLoaded,
-                        buildWhen: (previous, current) =>
-                            current is EventDeleteError ||
-                            current is EventDeleteLoading ||
-                            current is EventDeleteLoaded,
-                        listener: (context, state) {
-                          if (state is EventDeleteError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Error while deleting event, try again!"),
-                              ),
-                            );
-                          } else if (state is EventDeleteLoaded) {
-                            BlocProvider.of<EventCubit>(context).getEvents();
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is EventDeleteLoading) {
-                            return const CircularProgressIndicator();
-                          }
-                          return const Text(
-                            'Delete Event',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red),
-                          );
-                        },
-                      ),
-                      const Icon(Icons.delete, color: Colors.red, size: 20)
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push<void>(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => EventDetailsScreen(event: event),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Row(
+                  children: [
+                    Text(
+                      'Ver Detalhes',
+                      style: TextStyle(
+                          fontSize: 20,
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor),
                     ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Ver Detalhes',
-                        style:
-                            TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
-                      ),
-                      const SizedBox(width: 5),
-                      Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 20)
-                    ],
-                  ),
+                    const SizedBox(width: 5),
+                    Icon(Icons.arrow_forward_ios, color: Theme.of(context).primaryColor, size: 20)
+                  ],
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

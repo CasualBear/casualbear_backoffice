@@ -15,7 +15,7 @@ class _TeamScoresState extends State<TeamScores> {
 
   @override
   void initState() {
-    BlocProvider.of<EventCubit>(context).getScores(widget.eventId.toString());
+    BlocProvider.of<EventCubit>(context).getScores();
     super.initState();
   }
 
@@ -23,7 +23,7 @@ class _TeamScoresState extends State<TeamScores> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Estatisticas das Equipas'),
+        title: const Text('Classificação das Equipas'),
       ),
       body: BlocConsumer<EventCubit, EventState>(
         buildWhen: (previous, current) =>
@@ -68,19 +68,19 @@ class _TeamScoresState extends State<TeamScores> {
                           cells: <DataCell>[
                             DataCell(
                               Text(
-                                data.teamId,
+                                data.name,
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                             DataCell(
                               Text(
-                                data.correctAnswers.toString(),
+                                data.totalPoints.toString(),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                             DataCell(
                               Text(
-                                data.averageTime.toString(),
+                                data.timeSpent.toString(),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),

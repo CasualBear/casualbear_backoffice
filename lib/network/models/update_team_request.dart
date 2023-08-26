@@ -1,15 +1,16 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'update_team_request.g.dart';
+
+@JsonSerializable()
 class UpdateTeamRequest {
-  int userId;
+  int teamId;
   String isVerified;
   bool isCheckedIn;
 
-  UpdateTeamRequest({required this.userId, required this.isCheckedIn, required this.isVerified});
+  UpdateTeamRequest({required this.teamId, required this.isCheckedIn, required this.isVerified});
 
-  factory UpdateTeamRequest.fromJson(Map<String, dynamic> json) {
-    return UpdateTeamRequest(userId: json['userId'], isVerified: json['isVerified'], isCheckedIn: json['isCheckedIn']);
-  }
+  factory UpdateTeamRequest.fromJson(Map<String, dynamic> json) => _$UpdateTeamRequestFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {'userId': userId, 'isVerified': isVerified, 'isCheckedIn': isCheckedIn};
-  }
+  Map<String, dynamic> toJson() => _$UpdateTeamRequestToJson(this);
 }

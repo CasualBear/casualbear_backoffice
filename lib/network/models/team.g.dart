@@ -13,8 +13,8 @@ Team _$TeamFromJson(Map<String, dynamic> json) => Team(
       isCheckedIn: json['isCheckedIn'] as bool,
       isVerified: json['isVerified'] as String,
       name: json['name'] as String,
-      members: (json['members'] as List<dynamic>)
-          .map((e) => User.fromJson(e as Map<String, dynamic>))
+      members: (json['members'] as List<dynamic>?)
+          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
       isCheckedOverall: json['isCheckedOverall'] as bool,
       zones: json['zones'] as String,

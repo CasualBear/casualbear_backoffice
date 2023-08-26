@@ -12,3 +12,11 @@ class UpdateTeamFlagsLoaded extends TeamState {
 }
 
 class UpdateTeamFlagsError extends TeamState {}
+
+class UpdateTeamZonesLoading extends TeamState {}
+
+class UpdateTeamZonesLoaded extends TeamState {
+  UpdateTeamZonesLoaded();
+}
+
+class UpdateTeamZonesError extends TeamState {}

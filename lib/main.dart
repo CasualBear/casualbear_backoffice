@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           backgroundColor: Colors.black,
           title: Text(
-            'Backoffice'.toUpperCase(),
+            'Discovery Event'.toUpperCase(),
             style: const TextStyle(color: Colors.white),
           ),
         ),

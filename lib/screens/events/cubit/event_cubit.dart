@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/models/score.dart';
+import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/repositories/question_repository.dart';
 import 'package:flutter/material.dart';
@@ -54,10 +55,10 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
-  void getScores(String eventId) async {
+  void getScores() async {
     emit(GetScoresLoading());
     try {
-      List<Score> scores = await repository.getScores(eventId);
+      List<Team> scores = await repository.getScores();
       emit(GetScoresLoaded(scores: scores));
     } catch (e) {
       emit(GetScoresError());
@@ -102,19 +103,6 @@ class EventCubit extends Cubit<EventState> {
     emit(CreateQuestionLoading());
     try {
       await questionRepository.deleteQuestion(questionId);
-      Event response = await repository.getEvent(eventId);
-      emit(SingleEventGetLoaded(response));
-    } catch (e) {
-      emit(CreateQuestionError());
-    }
-  }
-
-  // Zones
-
-  void updateZoneStates(String eventId, String zoneNameToUpdate, bool status) async {
-    emit(CreateQuestionLoading());
-    try {
-      await repository.updateZoneState(eventId, zoneNameToUpdate, status);
       Event response = await repository.getEvent(eventId);
       emit(SingleEventGetLoaded(response));
     } catch (e) {

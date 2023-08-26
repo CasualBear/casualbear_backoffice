@@ -6,7 +6,6 @@ import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:casualbear_backoffice/screens/events/team_scores.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/question_item.dart';
-import 'package:casualbear_backoffice/widgets/event_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,7 +33,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(getColor(widget.event.selectedColor)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.black,
         title: Text(
           widget.event.name,
           style: const TextStyle(
@@ -94,7 +94,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             ),
                           );
                         },
-                        child: const Text('Ver Classificação em tempo real'),
+                        child: const Text('Ver Classificação'),
                       ),
                     ),
                     const SizedBox(width: 8), // Add some spacing between the buttons
@@ -194,9 +194,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                Text(team.isVerified),
+                Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : 'Estado: ${team.isVerified}'),
                 const SizedBox(height: 5),
-                Text(team.isCheckedOverall ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
+                Text(!team.isCheckedIn ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
               ]),
           trailing: const Icon(Icons.arrow_forward),
         ),

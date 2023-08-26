@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:casualbear_backoffice/network/models/user.dart';
-import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'team.g.dart';
@@ -19,7 +16,7 @@ class Team {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int eventId;
-  final List<User> members;
+  final List<User>? members;
 
   Team({
     required this.id,

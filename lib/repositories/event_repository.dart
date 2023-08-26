@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/score.dart';
+import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import '../network/services/api_error.dart';
 import 'package:dio/dio.dart';
@@ -75,12 +76,12 @@ class EventRepository {
     }
   }
 
-  Future<List<Score>> getScores(String eventId) async {
+  Future<List<Team>> getScores() async {
     try {
-      final response = await apiService.get('/api/answers/teams/event/$eventId');
-      var scoreDataList = List<dynamic>.from(response.data['teams']);
-      var scores = scoreDataList.map((eventData) => Score.fromJson(eventData as Map<String, dynamic>)).toList();
-      return scores;
+      final response = await apiService.get('/api/answers/teams');
+      var teamDataList = List<Map<String, dynamic>>.from(response.data['teams']);
+      var teams = teamDataList.map((teamData) => Team.fromJson(teamData)).toList();
+      return teams;
     } catch (e) {
       print(e);
       rethrow;

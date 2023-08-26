@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/update_team_request.dart';
+import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/repositories/team_repository.dart';
 import 'package:meta/meta.dart';
 
@@ -17,6 +18,16 @@ class TeamCubit extends Cubit<TeamState> {
       emit(UpdateTeamFlagsLoaded());
     } catch (e) {
       emit(UpdateTeamFlagsError());
+    }
+  }
+
+  void updateZonesByTeam(List<Zones> zones, String teamId) async {
+    emit(UpdateTeamZonesLoading());
+    try {
+      await repository.updateTeamZones(zones, teamId);
+      emit(UpdateTeamZonesLoaded());
+    } catch (e) {
+      emit(UpdateTeamZonesError());
     }
   }
 }
