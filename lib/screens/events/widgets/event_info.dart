@@ -5,6 +5,7 @@ class EventInfoItem extends StatelessWidget {
   final Event event;
 
   const EventInfoItem({
+    super.key,
     required this.event,
   });
 

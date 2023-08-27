@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/answer.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
-import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/models/question_request.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/screens/events/map_screen.dart';
@@ -20,10 +19,10 @@ class AddQuestionDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AddQuestionDialogState createState() => _AddQuestionDialogState();
+  AddQuestionDialogState createState() => AddQuestionDialogState();
 }
 
-class _AddQuestionDialogState extends State<AddQuestionDialog> {
+class AddQuestionDialogState extends State<AddQuestionDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _questionController;
   late TextEditingController _locationController;
@@ -245,7 +244,7 @@ class _AddQuestionDialogState extends State<AddQuestionDialog> {
                 question: _questionController.text,
                 answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
-                zone: 'ZoneA',
+                zone: selectedZone ?? 'ZoneA',
                 latitude: questionCoordinates.latitude.toString(),
                 longitude: questionCoordinates.longitude.toString(),
                 address: _locationController.text,

@@ -112,32 +112,31 @@ class _TeamDetailsState extends State<TeamDetails> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                SizedBox(
-                  height: 350,
-                  child: ListView.builder(
-                      shrinkWrap: true, // Add this line
-                      physics: const NeverScrollableScrollPhysics(), // Add this line
-                      itemCount: zones.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: SwitchListTile(
-                            tileColor: Colors.white,
-                            title: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [Text(zones[index].name), const Divider()],
-                            ),
-                            value: zones[index].active,
-                            onChanged: (bool value) {
-                              setState(() {
-                                zones[index].active = value;
-                              });
-
-                              BlocProvider.of<TeamCubit>(context).updateZonesByTeam(zones, widget.team.id.toString());
-                            },
+                Column(
+                  children: [
+                    for (int index = 0; index < zones.length; index++)
+                      Card(
+                        child: SwitchListTile(
+                          tileColor: Colors.white,
+                          title: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(zones[index].name),
+                              const Divider(),
+                            ],
                           ),
-                        );
-                      }),
+                          value: zones[index].active,
+                          onChanged: (bool value) {
+                            setState(() {
+                              zones[index].active = value;
+                            });
+
+                            BlocProvider.of<TeamCubit>(context).updateZonesByTeam(zones, widget.team.id.toString());
+                          },
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -150,61 +149,52 @@ class _TeamDetailsState extends State<TeamDetails> {
                 ),
                 const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 300),
-                  child: SizedBox(
-                      height: widget.team.members?.length == 2
-                          ? 500
-                          : widget.team.members?.length == 3
-                              ? 700
-                              : widget.team.members?.length == 4
-                                  ? 900
-                                  : 900,
-                      child: ListView.builder(
-                        itemCount: widget.team.members?.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final teamMember = widget.team.members?[index];
-                          return Card(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Visibility(
-                                    visible: teamMember?.isCaptain ?? false,
-                                    child: const Text(
-                                      'Capitão',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.underline,
-                                        fontSize: 22,
-                                      ),
+                  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
+                  child: Column(
+                    children: [
+                      for (int index = 0; index < (widget.team.members?.length ?? 0); index++)
+                        Card(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Visibility(
+                                  visible: widget.team.members?[index].isCaptain ?? false,
+                                  child: const Text(
+                                    'Capitão',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 22,
                                     ),
                                   ),
-                                  const SizedBox(height: 5),
-                                  _builtText('Name', teamMember?.name),
-                                  const SizedBox(height: 8),
-                                  _builtText('Email', teamMember?.email),
-                                  const SizedBox(height: 8),
-                                  _builtText('Tamanho T-Shirt', teamMember?.tShirtSize),
-                                  const SizedBox(height: 8),
-                                  _builtText('Data de Nascimento', teamMember?.dateOfBirth.toString()),
-                                  const SizedBox(height: 8),
-                                  _builtText('CC', teamMember?.cc),
-                                  const SizedBox(height: 8),
-                                  _builtText('Telefone', teamMember?.phone),
-                                  const SizedBox(height: 8),
-                                  _builtText('Morada', teamMember?.address),
-                                  const SizedBox(height: 10),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 5),
+                                _builtText('Name', widget.team.members?[index].name),
+                                const SizedBox(height: 8),
+                                _builtText('Email', widget.team.members?[index].email),
+                                const SizedBox(height: 8),
+                                _builtText('Tamanho T-Shirt', widget.team.members?[index].tShirtSize),
+                                const SizedBox(height: 8),
+                                _builtText('Data de Nascimento', widget.team.members?[index].dateOfBirth.toString()),
+                                const SizedBox(height: 8),
+                                _builtText('CC', widget.team.members?[index].cc),
+                                const SizedBox(height: 8),
+                                _builtText('Telefone', widget.team.members?[index].phone),
+                                const SizedBox(height: 8),
+                                _builtText('Morada', widget.team.members?[index].address),
+                                const SizedBox(height: 10),
+                              ],
                             ),
-                          );
-                        },
-                      )),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),

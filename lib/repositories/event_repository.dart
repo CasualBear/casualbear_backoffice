@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/event.dart';
-import 'package:casualbear_backoffice/network/models/score.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import '../network/services/api_error.dart';
@@ -18,7 +17,7 @@ class EventRepository {
     try {
       var url = Uri.parse("https://casuabearapi.herokuapp.com/api/event/upload-event");
       var request = http.MultipartRequest("POST", url);
-      request.files.add(await http.MultipartFile.fromBytes('iconFile', selectedFile,
+      request.files.add(http.MultipartFile.fromBytes('iconFile', selectedFile,
           contentType: MediaType('application', 'json'), filename: "icon"));
 
       request.fields['name'] = name; // Add name field
@@ -83,7 +82,6 @@ class EventRepository {
       var teams = teamDataList.map((teamData) => Team.fromJson(teamData)).toList();
       return teams;
     } catch (e) {
-      print(e);
       rethrow;
     }
   }

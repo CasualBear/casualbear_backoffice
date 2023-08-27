@@ -15,7 +15,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       saveToken(response);
       emit(AuthenticationLoaded());
     } catch (e) {
-      print(e);
       emit(AuthenticationError());
     }
   }

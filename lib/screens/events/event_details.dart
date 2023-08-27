@@ -16,10 +16,10 @@ class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({Key? key, required this.event}) : super(key: key);
 
   @override
-  _EventDetailsScreenState createState() => _EventDetailsScreenState();
+  EventDetailsScreenState createState() => EventDetailsScreenState();
 }
 
-class _EventDetailsScreenState extends State<EventDetailsScreen> {
+class EventDetailsScreenState extends State<EventDetailsScreen> {
   @override
   void initState() {
     BlocProvider.of<EventCubit>(context).getEvent(widget.event.id.toString());
@@ -113,47 +113,45 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 const SizedBox(height: 10),
                 _buildQuestionTitle(),
                 const SizedBox(height: 16),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.event.questions.length,
-                  itemBuilder: (context, index) {
-                    final question = state.event.questions[index];
-                    final answers = question.answers;
-                    final correctAnswerIndex = question.correctAnswerIndex;
-
-                    Question questionDTO = Question(
-                      id: question.id,
-                      latitude: question.latitude,
-                      longitude: question.longitude,
-                      address: question.address,
-                      zone: question.zone,
-                      question: question.question,
-                      answers: answers,
-                      correctAnswerIndex: correctAnswerIndex,
-                      eventId: state.event.id,
-                      createdAt: '',
-                      points: 0,
-                      updatedAt: '',
-                    );
-
-                    return Column(
-                      children: [
-                        QuestionItem(
-                          event: state.event,
-                          onDeleteQuestion: (question) {
-                            BlocProvider.of<EventCubit>(context)
-                                .deleteQuestion(question.id.toString(), widget.event.id.toString());
-                          },
-                          question: questionDTO,
-                          onEditQuestion: (question) {
-                            BlocProvider.of<EventCubit>(context).updateQuestion(question, widget.event.id.toString());
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                )
+                state.event.questions.isNotEmpty
+                    ? Column(
+                        children: [
+                          for (int index = 0; index < (state.event.questions.length); index++)
+                            Column(
+                              children: [
+                                QuestionItem(
+                                  event: state.event,
+                                  onDeleteQuestion: (question) {
+                                    BlocProvider.of<EventCubit>(context)
+                                        .deleteQuestion(question.id.toString(), widget.event.id.toString());
+                                  },
+                                  question: Question(
+                                    id: state.event.questions[index].id,
+                                    latitude: state.event.questions[index].latitude,
+                                    longitude: state.event.questions[index].longitude,
+                                    address: state.event.questions[index].address,
+                                    zone: state.event.questions[index].zone,
+                                    question: state.event.questions[index].question,
+                                    answers: state.event.questions[index].answers,
+                                    correctAnswerIndex: state.event.questions[index].correctAnswerIndex,
+                                    eventId: state.event.id,
+                                    createdAt: '',
+                                    points: 0,
+                                    updatedAt: '',
+                                  ),
+                                  onEditQuestion: (question) {
+                                    BlocProvider.of<EventCubit>(context)
+                                        .updateQuestion(question, widget.event.id.toString());
+                                  },
+                                ),
+                              ],
+                            ),
+                        ],
+                      )
+                    : const Text(
+                        'Sem questões criadas',
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                      )
               ],
             );
           } else {
@@ -208,7 +206,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     return Row(
       children: [
         const Text(
-          'Create Questions',
+          'Criar Questão',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

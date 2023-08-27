@@ -13,5 +13,5 @@ class ApiError implements Exception {
 
   Map<String, dynamic> toJson() => _$ApiErrorToJson(this);
 
-  static String get defaultErrorMessage => 'Something went wrong.'; // TODO: Revise copy?
+  static String get defaultErrorMessage => 'Something went wrong.';
 }

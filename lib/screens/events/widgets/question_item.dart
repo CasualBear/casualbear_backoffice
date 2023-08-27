@@ -19,10 +19,10 @@ class QuestionItem extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _QuestionItemState createState() => _QuestionItemState();
+  QuestionItemState createState() => QuestionItemState();
 }
 
-class _QuestionItemState extends State<QuestionItem> {
+class QuestionItemState extends State<QuestionItem> {
   late TextEditingController _questionController;
   late List<TextEditingController> _answerControllers;
 
@@ -57,7 +57,7 @@ class _QuestionItemState extends State<QuestionItem> {
                   ),
               children: [
                 const TextSpan(
-                  text: 'Question: ',
+                  text: 'Questão: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 TextSpan(
@@ -69,6 +69,29 @@ class _QuestionItemState extends State<QuestionItem> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
+                    const TextSpan(
+                        text: 'Pontos: ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    TextSpan(text: widget.question.points.toString()),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
+                    const TextSpan(text: 'Zona: ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                    TextSpan(text: widget.question.zone),
+                  ],
+                ),
+              ),
               RichText(
                 text: TextSpan(
                   style: DefaultTextStyle.of(context).style.copyWith(
@@ -97,25 +120,14 @@ class _QuestionItemState extends State<QuestionItem> {
                         fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
                       ),
                   children: [
-                    const TextSpan(text: 'Zone: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextSpan(text: widget.question.zone),
-                  ],
-                ),
-              ),
-              RichText(
-                text: TextSpan(
-                  style: DefaultTextStyle.of(context).style.copyWith(
-                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
-                      ),
-                  children: [
-                    const TextSpan(text: 'Address: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const TextSpan(text: 'Endereço: ', style: TextStyle(fontWeight: FontWeight.bold)),
                     TextSpan(text: widget.question.address),
                   ],
                 ),
               ),
               widget.question.answers?.isNotEmpty ?? false
                   ? Text(
-                      'Correct Answer Index: ${widget.question.correctAnswerIndex}',
+                      'Resposta Correcta: ${widget.question.correctAnswerIndex}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
@@ -125,24 +137,30 @@ class _QuestionItemState extends State<QuestionItem> {
               const SizedBox(height: 16),
               widget.question.answers?.isEmpty ?? false
                   ? const Text(
-                      'This is a challenge question',
+                      'Isto é um desafio',
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                     )
-                  : const Text('Answers:'),
-              SizedBox(
-                height: 300,
-                child: ListView.builder(
-                  itemCount: widget.question.answers?.length,
-                  itemBuilder: (context, index) {
+                  : const Text(
+                      'Respostas (Correcta a verde)',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+              Visibility(
+                visible: widget.question.answers?.isNotEmpty ?? false,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(widget.question.answers?.length ?? 0, (index) {
                     Answer? answer = widget.question.answers?[index];
                     return ListTile(
                       title: Text(
-                        '$index:${answer?.answer}',
-                        style:
-                            TextStyle(color: widget.question.correctAnswerIndex == index ? Colors.green : Colors.black),
+                        'Resposta $index:${answer?.answer}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: widget.question.correctAnswerIndex == index ? Colors.green : Colors.black,
+                        ),
                       ),
                     );
-                  },
+                  }),
                 ),
               )
             ],
@@ -151,7 +169,7 @@ class _QuestionItemState extends State<QuestionItem> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.delete),
+                icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
                   widget.onDeleteQuestion(widget.question);
                 },

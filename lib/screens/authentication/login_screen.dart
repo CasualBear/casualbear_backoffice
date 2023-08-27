@@ -79,7 +79,7 @@ class _LoginFormState extends State<LoginForm> {
                   Navigator.pushReplacement<void, void>(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (BuildContext context) => MainScreen(),
+                      builder: (BuildContext context) => const MainScreen(),
                     ),
                   );
                 } else if (state is AuthenticationError) {
