@@ -36,7 +36,6 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   final List<TextEditingController> _answerControllers = [];
   int _correctAnswerIndex = 0;
   final List<String> zones = [
-    "All",
     "ZoneA",
     "ZoneAChallenges",
     "ZoneB",
@@ -183,6 +182,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                   Switch(
                     value: _isFake,
                     onChanged: (value) {
+                      _questionController.clear();
                       setState(() {
                         _isFake = value;
                       });
@@ -290,7 +290,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
               QuestionRequest question = QuestionRequest(
                 id: 1, // backend ignores this
                 question: _questionController.text.isEmpty ? "" : _questionController.text,
-                isInvisible: !_isInvisible,
+                isVisible: !_isInvisible,
                 answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
                 zone: selectedZone ?? 'ZoneA',

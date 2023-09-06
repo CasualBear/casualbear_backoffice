@@ -10,7 +10,7 @@ QuestionRequest _$QuestionRequestFromJson(Map<String, dynamic> json) =>
     QuestionRequest(
       id: json['id'] as int,
       question: json['question'] as String,
-      isInvisible: json['isInvisible'] as bool,
+      isVisible: json['isVisible'] as bool,
       answers: (json['answers'] as List<dynamic>?)
           ?.map((e) => Answer.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -31,7 +31,7 @@ Map<String, dynamic> _$QuestionRequestToJson(QuestionRequest instance) =>
       'question': instance.question,
       'answers': instance.answers,
       'correctAnswerIndex': instance.correctAnswerIndex,
-      'isInvisible': instance.isInvisible,
+      'isVisible': instance.isVisible,
       'points': instance.points,
       'zone': instance.zone,
       'latitude': instance.latitude,

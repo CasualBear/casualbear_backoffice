@@ -45,6 +45,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
     "ZoneE",
     "ZoneEChallenges",
   ];
+
   String selectedZone = "All";
 
   @override
@@ -54,6 +55,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   void addQuestion(QuestionRequest question) {
+    isFirstEntrance = true;
     BlocProvider.of<EventCubit>(context).addQuestion(question, eventId);
   }
 

@@ -9,7 +9,7 @@ class QuestionRequest {
   final String question;
   final List<Answer>? answers;
   final int correctAnswerIndex;
-  final bool isInvisible;
+  final bool isVisible;
   final int points;
   final String zone;
   final String latitude;
@@ -22,7 +22,7 @@ class QuestionRequest {
   QuestionRequest({
     required this.id,
     required this.question,
-    required this.isInvisible,
+    required this.isVisible,
     required this.answers,
     required this.correctAnswerIndex,
     required this.points,
