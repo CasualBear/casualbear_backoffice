@@ -10,6 +10,7 @@ class Question {
   final List<Answer>? answers;
   final int correctAnswerIndex;
   final int points;
+  final bool isVisible;
   final String zone;
   final String latitude;
   final String longitude;
@@ -24,6 +25,7 @@ class Question {
     required this.answers,
     required this.correctAnswerIndex,
     required this.points,
+    required this.isVisible,
     required this.zone,
     required this.latitude,
     required this.longitude,

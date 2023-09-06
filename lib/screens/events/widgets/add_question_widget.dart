@@ -30,15 +30,23 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   String? selectedZone;
 
   bool _isChallenge = false;
+  bool _isInvisible = false;
+  bool _isFake = false;
 
   final List<TextEditingController> _answerControllers = [];
   int _correctAnswerIndex = 0;
-  List<String> zones = [
-    'ZoneA',
-    'ZoneB',
-    'ZoneC',
-    'ZoneD',
-    'ZoneE',
+  final List<String> zones = [
+    "All",
+    "ZoneA",
+    "ZoneAChallenges",
+    "ZoneB",
+    "ZoneBChallenges",
+    "ZoneC",
+    "ZoneCChallenges",
+    "ZoneD",
+    "ZoneDChallenges",
+    "ZoneE",
+    "ZoneEChallenges",
   ];
 
   @override
@@ -82,29 +90,32 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Question'),
+      title: const Text('Adicionar Questão'),
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
-              controller: _questionController,
-              decoration: const InputDecoration(
-                labelText: 'Question',
+            Visibility(
+              visible: !_isFake,
+              child: TextFormField(
+                controller: _questionController,
+                decoration: const InputDecoration(
+                  labelText: 'Pergunta',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Introduza uma pergunta';
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a question';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: 8),
             TextFormField(
               controller: _locationController,
               decoration: const InputDecoration(
-                labelText: 'Location',
+                labelText: 'Localização',
               ),
               onTap: () async {
                 await Navigator.push<String?>(
@@ -125,7 +136,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
             Row(
               children: [
                 const Text(
-                  'Zone: ',
+                  'Zona: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Expanded(
@@ -147,22 +158,59 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
               ],
             ),
             const SizedBox(height: 10),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Text('Is Challenge?'),
-                Switch(
-                  value: _isChallenge,
-                  onChanged: (value) {
-                    setState(() {
-                      _isChallenge = value;
-                    });
-                  },
-                ),
-              ],
-            ),
             Visibility(
-              visible: !_isChallenge,
+              visible: !(_isFake || _isInvisible),
+              child: Row(
+                children: [
+                  const Text('É desafio'),
+                  Switch(
+                    value: _isChallenge,
+                    onChanged: (value) {
+                      setState(() {
+                        _isChallenge = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Visibility(
+              visible: !(_isChallenge || _isInvisible),
+              child: Row(
+                children: [
+                  const Text('É pergunta falsa?'),
+                  Switch(
+                    value: _isFake,
+                    onChanged: (value) {
+                      setState(() {
+                        _isFake = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Visibility(
+              visible: !(_isFake || _isChallenge),
+              child: Row(
+                children: [
+                  const Text('É pergunta Invisivel?'),
+                  Switch(
+                    value: _isInvisible,
+                    onChanged: (value) {
+                      setState(() {
+                        _isInvisible = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Visibility(
+              visible: !(_isFake || _isChallenge),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -241,7 +289,8 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
 
               QuestionRequest question = QuestionRequest(
                 id: 1, // backend ignores this
-                question: _questionController.text,
+                question: _questionController.text.isEmpty ? "" : _questionController.text,
+                isInvisible: !_isInvisible,
                 answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
                 zone: selectedZone ?? 'ZoneA',

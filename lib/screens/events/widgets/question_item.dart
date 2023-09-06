@@ -87,6 +87,18 @@ class QuestionItemState extends State<QuestionItem> {
                         fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
                       ),
                   children: [
+                    const TextSpan(
+                        text: 'É Visivel? : ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+                    TextSpan(text: widget.question.isVisible ? "Sim" : 'Não'),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
                     const TextSpan(text: 'Zona: ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
                     TextSpan(text: widget.question.zone),
                   ],
@@ -135,15 +147,20 @@ class QuestionItemState extends State<QuestionItem> {
                     )
                   : Container(),
               const SizedBox(height: 16),
-              widget.question.answers?.isEmpty ?? false
+              widget.question.question.isEmpty
                   ? const Text(
-                      'Isto é um desafio',
+                      'Isto é uma pergunta falsa',
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                     )
-                  : const Text(
-                      'Respostas (Correcta a verde)',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                  : widget.question.answers?.isEmpty ?? false
+                      ? const Text(
+                          'Isto é um desafio',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
+                        )
+                      : const Text(
+                          'Respostas (Correcta a verde)',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
               Visibility(
                 visible: widget.question.answers?.isNotEmpty ?? false,
                 child: Column(

@@ -280,10 +280,12 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                       QuestionItem(
                                         event: event!,
                                         onDeleteQuestion: (question) {
+                                          isFirstEntrance = true;
                                           BlocProvider.of<EventCubit>(context)
                                               .deleteQuestion(question.id.toString(), eventId);
                                         },
                                         question: Question(
+                                          isVisible: filteredQuestions[index].isVisible,
                                           id: filteredQuestions[index].id,
                                           latitude: filteredQuestions[index].latitude,
                                           longitude: filteredQuestions[index].longitude,
@@ -306,7 +308,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                 },
                                 options: CarouselOptions(
                                   padEnds: false,
-                                  height: 500,
+                                  height: 600,
                                   aspectRatio: 2.0, // Adjust aspectRatio to your preference
                                   viewportFraction: 0.3, // Adjust viewportFraction to your preference
                                   enableInfiniteScroll: false, // Disable infinite scroll
