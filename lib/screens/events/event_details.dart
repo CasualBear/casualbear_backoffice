@@ -57,10 +57,49 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 80, // Set the desired height here
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: IconButton(
+              icon: const Icon(
+                Icons.play_arrow,
+                color: Colors.green,
+              ),
+              onPressed: () {
+                _showAlertDialog(
+                  context,
+                  "COMEÇAR",
+                  "Tem a certeza que quer começar o evento?",
+
+                  () {}, // Provide the start event callback
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: IconButton(
+              icon: const Icon(
+                Icons.stop,
+                color: Colors.red,
+              ),
+              onPressed: () {
+                _showAlertDialog(
+                  context,
+                  "TERMINAR",
+                  "Tem a certeza que quer terminar o evento, isto terá implicações nos resultados e irá fazer reset a todos os dados?",
+                  () {},
+                );
+              },
+            ),
+          ),
+        ],
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
         title: const Text(
-          "Wbdday Backoffice",
+          "Wbdday Event",
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -378,6 +417,33 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showAlertDialog(BuildContext context, String title, String message, Function() onConfirm) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Confirmar"),
+              onPressed: () {
+                onConfirm(); // Execute the provided callback
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

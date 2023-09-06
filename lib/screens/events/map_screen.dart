@@ -13,17 +13,15 @@ class MapScreen extends StatelessWidget {
           title: const Text('Select Location'),
         ),
         body: FlutterLocationPicker(
-            initPosition: const LatLong(23, 89),
+            initPosition: const LatLong(38.78450106308353, -9.159145343998064),
             selectLocationButtonStyle: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blue),
+              backgroundColor: MaterialStateProperty.all(Colors.white),
             ),
             selectedLocationButtonTextstyle: const TextStyle(fontSize: 18),
             selectLocationButtonText: 'Set Current Location',
             selectLocationButtonLeadingIcon: const Icon(Icons.check),
-            initZoom: 11,
+            initZoom: 18,
             minZoomLevel: 5,
-            maxZoomLevel: 16,
-            trackMyPosition: true,
             onPicked: (pickedData) {
               onAddressPicked(pickedData.latLong.latitude, pickedData.latLong.longitude, pickedData.address);
             }));
