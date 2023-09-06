@@ -1,4 +1,4 @@
-import 'package:casualbear_backoffice/widgets/event_list.dart';
+/*import 'package:casualbear_backoffice/widgets/event_list.dart';
 import 'package:flutter/material.dart';
 
 class EventScreen extends StatelessWidget {
@@ -9,3 +9,4 @@ class EventScreen extends StatelessWidget {
     return const EventList();
   }
 }
+*/

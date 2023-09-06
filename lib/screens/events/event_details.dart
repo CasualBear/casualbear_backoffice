@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/models/question_request.dart';
@@ -11,23 +12,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EventDetailsScreen extends StatefulWidget {
-  final Event event;
-
-  const EventDetailsScreen({Key? key, required this.event}) : super(key: key);
+  const EventDetailsScreen({Key? key}) : super(key: key);
 
   @override
   EventDetailsScreenState createState() => EventDetailsScreenState();
 }
 
 class EventDetailsScreenState extends State<EventDetailsScreen> {
+  String eventId = "1";
+  Event? event;
+  final CarouselController _carouselController = CarouselController();
+  final CarouselController _questionsCarouselController = CarouselController();
+  TextEditingController searchController = TextEditingController();
+  List<Team> allTeams = []; // Store all teams
+  List<Team> filteredTeams = []; // Store filtered teams
+  bool isFirstEntrance = true;
+
   @override
   void initState() {
-    BlocProvider.of<EventCubit>(context).getEvent(widget.event.id.toString());
+    BlocProvider.of<EventCubit>(context).getEvent("1");
     super.initState();
   }
 
   void addQuestion(QuestionRequest question) {
-    BlocProvider.of<EventCubit>(context).addQuestion(question, widget.event.id.toString());
+    BlocProvider.of<EventCubit>(context).addQuestion(question, eventId);
+  }
+
+  void _filterTeams(String query) {
+    filteredTeams.clear();
+    if (query.isEmpty) {
+      setState(() {
+        filteredTeams = List<Team>.from(allTeams);
+      });
+    } else {
+      setState(() {
+        filteredTeams = allTeams.where((team) {
+          return team.name.toLowerCase().startsWith(query.toLowerCase());
+        }).toList();
+      });
+    }
   }
 
   @override
@@ -36,9 +59,9 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
-        title: Text(
-          widget.event.name,
-          style: const TextStyle(
+        title: const Text(
+          "Wbdday Backoffice",
+          style: TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -53,106 +76,197 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
           if (state is SingleEventGetLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is SingleEventGetLoaded) {
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                const SizedBox(height: 16),
-                const Text(
-                  'Equipas dentro do Evento',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                state.event.teams?.isNotEmpty ?? false
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: state.event.teams!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _buildTeamItem(state.event.teams![index]);
-                        },
-                      )
-                    : const Text("Sem equipas inscritas"),
-                const SizedBox(height: 16),
-                const Text(
-                  'Informação em tempo real',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
+            event = state.event;
+
+            if (isFirstEntrance) {
+              allTeams = state.event.teams ?? [];
+              filteredTeams = List<Team>.from(allTeams);
+              isFirstEntrance = false;
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(left: 30, right: 30),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.push<void>(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) => TeamScores(eventId: widget.event.id),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Procurar Equipas (Nome)',
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: (value) {
+                          // Call filter function with updated input
+                          _filterTeams(value);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Equipas dentro do Evento',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    state.event.teams?.isNotEmpty ?? false
+                        ? CarouselSlider.builder(
+                            carouselController: _carouselController,
+                            itemCount: filteredTeams.length,
+                            itemBuilder: (BuildContext context, int index, int realIndex) {
+                              if (filteredTeams.isNotEmpty) {
+                                return _buildTeamItem(filteredTeams[index]);
+                              } else {
+                                return const Text("Sem equipas inscritas");
+                              }
+                            },
+                            options: CarouselOptions(
+                              padEnds: false,
+                              height: 200,
+                              aspectRatio: 2.0, // Adjust aspectRatio to your preference
+                              viewportFraction: 0.2, // Adjust viewportFraction to your preference
+                              enableInfiniteScroll: false, // Disable infinite scroll
+                              autoPlay: false, // Disable auto-play
+                              initialPage: 0, // Set the initial page to 0 (start on the left)
                             ),
-                          );
-                        },
-                        child: const Text('Ver Classificação'),
+                          )
+                        : const Text("Sem equipas inscritas"),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () {
+                            _carouselController.previousPage();
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.arrow_forward),
+                          onPressed: () {
+                            _carouselController.nextPage();
+                          },
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      'Informação em tempo real',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: 8), // Add some spacing between the buttons
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Handle Ver Localização em tempo real button tap
-                        },
-                        child: const Text('Ver Localização em tempo real'),
-                      ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) => TeamScores(eventId: int.parse(eventId)),
+                                ),
+                              );
+                            },
+                            child: const Text('Ver Classificação', style: TextStyle(color: Colors.black)),
+                          ),
+                        ),
+                        const SizedBox(width: 8), // Add some spacing between the buttons
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Handle Ver Localização em tempo real button tap
+                            },
+                            child: const Text('Ver Localização em tempo real', style: TextStyle(color: Colors.black)),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
+                    _buildQuestionTitle(),
+                    const SizedBox(height: 16),
+                    state.event.questions.isNotEmpty
+                        ? Column(
+                            children: [
+                              CarouselSlider.builder(
+                                carouselController: _questionsCarouselController,
+                                itemCount: state.event.questions.length,
+                                itemBuilder: (BuildContext context, int index, int realIndex) {
+                                  return Column(
+                                    children: [
+                                      QuestionItem(
+                                        event: state.event,
+                                        onDeleteQuestion: (question) {
+                                          BlocProvider.of<EventCubit>(context)
+                                              .deleteQuestion(question.id.toString(), eventId);
+                                        },
+                                        question: Question(
+                                          id: state.event.questions[index].id,
+                                          latitude: state.event.questions[index].latitude,
+                                          longitude: state.event.questions[index].longitude,
+                                          address: state.event.questions[index].address,
+                                          zone: state.event.questions[index].zone,
+                                          question: state.event.questions[index].question,
+                                          answers: state.event.questions[index].answers,
+                                          correctAnswerIndex: state.event.questions[index].correctAnswerIndex,
+                                          eventId: state.event.id,
+                                          createdAt: '',
+                                          points: 0,
+                                          updatedAt: '',
+                                        ),
+                                        onEditQuestion: (question) {
+                                          BlocProvider.of<EventCubit>(context).updateQuestion(question, eventId);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                                options: CarouselOptions(
+                                  padEnds: false,
+                                  height: 500,
+                                  aspectRatio: 2.0, // Adjust aspectRatio to your preference
+                                  viewportFraction: 0.3, // Adjust viewportFraction to your preference
+                                  enableInfiniteScroll: false, // Disable infinite scroll
+                                  autoPlay: false, // Disable auto-play
+                                  initialPage: 0, // Set the initial page to 0 (start on the left)
+                                ),
+                              )
+                            ],
+                          )
+                        : const Text(
+                            'Sem questões criadas',
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                          ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () {
+                            _questionsCarouselController.previousPage();
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.arrow_forward),
+                          onPressed: () {
+                            _questionsCarouselController.nextPage();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 50),
                   ],
                 ),
-                const SizedBox(height: 16),
-                const SizedBox(height: 10),
-                _buildQuestionTitle(),
-                const SizedBox(height: 16),
-                state.event.questions.isNotEmpty
-                    ? Column(
-                        children: [
-                          for (int index = 0; index < (state.event.questions.length); index++)
-                            Column(
-                              children: [
-                                QuestionItem(
-                                  event: state.event,
-                                  onDeleteQuestion: (question) {
-                                    BlocProvider.of<EventCubit>(context)
-                                        .deleteQuestion(question.id.toString(), widget.event.id.toString());
-                                  },
-                                  question: Question(
-                                    id: state.event.questions[index].id,
-                                    latitude: state.event.questions[index].latitude,
-                                    longitude: state.event.questions[index].longitude,
-                                    address: state.event.questions[index].address,
-                                    zone: state.event.questions[index].zone,
-                                    question: state.event.questions[index].question,
-                                    answers: state.event.questions[index].answers,
-                                    correctAnswerIndex: state.event.questions[index].correctAnswerIndex,
-                                    eventId: state.event.id,
-                                    createdAt: '',
-                                    points: 0,
-                                    updatedAt: '',
-                                  ),
-                                  onEditQuestion: (question) {
-                                    BlocProvider.of<EventCubit>(context)
-                                        .updateQuestion(question, widget.event.id.toString());
-                                  },
-                                ),
-                              ],
-                            ),
-                        ],
-                      )
-                    : const Text(
-                        'Sem questões criadas',
-                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
-                      )
-              ],
+              ),
             );
           } else {
             return const Text("Impossible to load event details");
@@ -175,7 +289,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
         );
 
         // ignore: use_build_context_synchronously
-        BlocProvider.of<EventCubit>(context).getEvent(widget.event.id.toString());
+        BlocProvider.of<EventCubit>(context).getEvent(eventId);
       },
       child: Card(
         color: Colors.grey[200],
@@ -192,9 +306,38 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : 'Estado: ${team.isVerified}'),
+                Row(
+                  children: [
+                    const Text('Criação:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
+                    Text(team.createdAt.toIso8601String(), style: const TextStyle(fontSize: 13)),
+                  ],
+                ),
                 const SizedBox(height: 5),
-                Text(!team.isCheckedIn ? 'Check-in não efetuado ⛔️' : 'Checked-in ✅')
+                Row(
+                  children: [
+                    const Text('Estado:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
+                    Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : team.isVerified),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    const Text('Check-in:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
+                    Text(!team.isCheckedIn ? 'N/A' : 'Checked-in ✅'),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    const Text('Pontos actuais:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
+                    Text(team.totalPoints.toString()),
+                  ],
+                ),
+                const SizedBox(height: 5),
               ]),
           trailing: const Icon(Icons.arrow_forward),
         ),
@@ -218,18 +361,18 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
             showDialog(
               context: context,
               builder: (BuildContext context) => AddQuestionDialog(
-                event: widget.event,
+                event: event!,
                 onAddQuestion: addQuestion,
               ),
             );
           },
           child: Container(
-            color: Colors.green,
+            color: Colors.black,
             child: const Padding(
               padding: EdgeInsets.all(4),
               child: Icon(
                 Icons.add,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),

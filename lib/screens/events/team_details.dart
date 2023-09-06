@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/models/update_team_request.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
@@ -152,47 +153,64 @@ class _TeamDetailsState extends State<TeamDetails> {
                   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
                   child: Column(
                     children: [
-                      for (int index = 0; index < (widget.team.members?.length ?? 0); index++)
-                        Card(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Visibility(
-                                  visible: widget.team.members?[index].isCaptain ?? false,
-                                  child: const Text(
-                                    'Capitão',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 22,
+                      CarouselSlider.builder(
+                        itemCount: widget.team.members?.length,
+                        itemBuilder: (BuildContext context, int index, int realIndex) {
+                          return Card(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Visibility(
+                                    visible: widget.team.members?[index].isCaptain ?? false,
+                                    child: const Text(
+                                      'Capitão',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 22,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                _builtText('Name', widget.team.members?[index].name),
-                                const SizedBox(height: 8),
-                                _builtText('Email', widget.team.members?[index].email),
-                                const SizedBox(height: 8),
-                                _builtText('Tamanho T-Shirt', widget.team.members?[index].tShirtSize),
-                                const SizedBox(height: 8),
-                                _builtText('Data de Nascimento', widget.team.members?[index].dateOfBirth.toString()),
-                                const SizedBox(height: 8),
-                                _builtText('CC', widget.team.members?[index].cc),
-                                const SizedBox(height: 8),
-                                _builtText('Telefone', widget.team.members?[index].phone),
-                                const SizedBox(height: 8),
-                                _builtText('Morada', widget.team.members?[index].address),
-                                const SizedBox(height: 10),
-                              ],
+                                  const SizedBox(height: 5),
+                                  _builtText('Name', widget.team.members?[index].name),
+                                  const SizedBox(height: 8),
+                                  _builtText('Email', widget.team.members?[index].email),
+                                  const SizedBox(height: 8),
+                                  _builtText('Cartão NOS', widget.team.members?[index].nosCard ?? "N/A"),
+                                  const SizedBox(height: 8),
+                                  _builtText('Tamanho T-Shirt', widget.team.members?[index].tShirtSize),
+                                  const SizedBox(height: 8),
+                                  _builtText('Data de Nascimento', widget.team.members?[index].dateOfBirth.toString()),
+                                  const SizedBox(height: 8),
+                                  _builtText('CC', widget.team.members?[index].cc),
+                                  const SizedBox(height: 8),
+                                  _builtText('Telefone', widget.team.members?[index].phone),
+                                  const SizedBox(height: 8),
+                                  _builtText('Código postal', widget.team.members?[index].postalCode),
+                                  const SizedBox(height: 8),
+                                  _builtText('Morada', widget.team.members?[index].address),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
                             ),
-                          ),
+                          );
+                        },
+                        options: CarouselOptions(
+                          padEnds: false,
+                          height: 400,
+                          aspectRatio: 2.0, // Adjust aspectRatio to your preference
+                          viewportFraction: 0.2, // Adjust viewportFraction to your preference
+                          enableInfiniteScroll: false, // Disable infinite scroll
+                          autoPlay: false, // Disable auto-play
+                          initialPage: 0, // Set the initial page to 0 (start on the left)
                         ),
+                      )
                     ],
                   ),
                 ),

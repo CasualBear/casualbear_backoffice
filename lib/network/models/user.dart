@@ -10,6 +10,7 @@ class User {
   final String? role;
   final String password;
   final DateTime dateOfBirth;
+  final String postalCode;
   final String cc;
   final String phone;
   final String address;
@@ -26,6 +27,7 @@ class User {
     required this.id,
     required this.name,
     required this.email,
+    required this.postalCode,
     this.role,
     required this.password,
     required this.dateOfBirth,

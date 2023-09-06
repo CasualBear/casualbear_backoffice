@@ -1,4 +1,4 @@
-import 'package:casualbear_backoffice/network/models/event.dart';
+/*import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/event_details.dart';
 import 'package:casualbear_backoffice/widgets/create_event_dialog.dart';
@@ -53,30 +53,22 @@ class _EventListState extends State<EventList> {
           BlocConsumer<EventCubit, EventState>(
             buildWhen: (previous, current) =>
                 current is EventGetLoading || current is EventGetLoaded || current is EventGetError,
-            listenWhen: (previous, current) => current is EventGetError,
+            listenWhen: (previous, current) => current is EventGetError || current is EventGetLoaded,
             listener: (context, state) {
               if (state is EventGetError) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text("Error while getting the events, try again!"),
                 ));
+              } else if (state is EventGetLoaded) {
+                Navigator.push<void>(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => EventDetailsScreen(event: state.events[0]),
+                  ),
+                );
               }
             },
             builder: (context, state) {
-              if (state is EventGetLoading) {
-                return const CircularProgressIndicator();
-              } else if (state is EventGetLoaded) {
-                return state.events.isEmpty
-                    ? const Text('No events created, press + to create one')
-                    : Expanded(
-                        child: ListView.builder(
-                        itemCount: state.events.length,
-                        itemBuilder: (context, index) {
-                          Event event = state.events[index];
-                          return _buildListItem(event);
-                        },
-                      ));
-              }
-
               return Container();
             },
           )
@@ -154,32 +146,6 @@ class _EventListState extends State<EventList> {
               ],
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text.rich(
-                TextSpan(
-                  text: 'Website: ',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: 'https://cblandingpage.web.app/#/',
-                      style: const TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.blue,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launch('https://cblandingpage.web.app/#/');
-                        },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
             GestureDetector(
               onTap: () {
                 Navigator.push<void>(
@@ -218,3 +184,4 @@ int getColor(int color) {
   int result = (0xff << 24) | color;
   return result;
 }
+*/

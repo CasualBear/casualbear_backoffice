@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'screens/authentication/login_screen.dart';
+import 'screens/events/event_details.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,19 +63,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text(
-            'Discovery Event'.toUpperCase(),
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-        body: const Column(
-          children: [
-            Expanded(child: EventScreen()),
-          ],
-        ));
+    return const Scaffold(backgroundColor: Colors.white, body: EventDetailsScreen());
   }
 }
