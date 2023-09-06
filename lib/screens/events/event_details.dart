@@ -26,7 +26,26 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
   TextEditingController searchController = TextEditingController();
   List<Team> allTeams = []; // Store all teams
   List<Team> filteredTeams = []; // Store filtered teams
+
+  List<Question> allQuestions = []; // Store all teams
+  List<Question> filteredQuestions = []; // Store filtered teams
+
   bool isFirstEntrance = true;
+
+  final List<String> zones = [
+    "All",
+    "ZoneA",
+    "ZoneAChallenges",
+    "ZoneB",
+    "ZoneBChallenges",
+    "ZoneC",
+    "ZoneCChallenges",
+    "ZoneD",
+    "ZoneDChallenges",
+    "ZoneE",
+    "ZoneEChallenges",
+  ];
+  String selectedZone = "All";
 
   @override
   void initState() {
@@ -48,6 +67,21 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
       setState(() {
         filteredTeams = allTeams.where((team) {
           return team.name.toLowerCase().startsWith(query.toLowerCase());
+        }).toList();
+      });
+    }
+  }
+
+  void _filterQuestions(String zone) {
+    filteredQuestions.clear();
+    if (zone == "All") {
+      setState(() {
+        filteredQuestions = List<Question>.from(allQuestions);
+      });
+    } else {
+      setState(() {
+        filteredQuestions = allQuestions.where((question) {
+          return question.zone.toLowerCase().startsWith(zone.toLowerCase());
         }).toList();
       });
     }
@@ -119,7 +153,9 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
 
             if (isFirstEntrance) {
               allTeams = state.event.teams ?? [];
+              allQuestions = state.event.questions;
               filteredTeams = List<Team>.from(allTeams);
+              filteredQuestions = List<Question>.from(allQuestions);
               isFirstEntrance = false;
             }
 
@@ -232,30 +268,30 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                     const SizedBox(height: 10),
                     _buildQuestionTitle(),
                     const SizedBox(height: 16),
-                    state.event.questions.isNotEmpty
+                    filteredQuestions.isNotEmpty
                         ? Column(
                             children: [
                               CarouselSlider.builder(
                                 carouselController: _questionsCarouselController,
-                                itemCount: state.event.questions.length,
+                                itemCount: filteredQuestions.length,
                                 itemBuilder: (BuildContext context, int index, int realIndex) {
                                   return Column(
                                     children: [
                                       QuestionItem(
-                                        event: state.event,
+                                        event: event!,
                                         onDeleteQuestion: (question) {
                                           BlocProvider.of<EventCubit>(context)
                                               .deleteQuestion(question.id.toString(), eventId);
                                         },
                                         question: Question(
-                                          id: state.event.questions[index].id,
-                                          latitude: state.event.questions[index].latitude,
-                                          longitude: state.event.questions[index].longitude,
-                                          address: state.event.questions[index].address,
-                                          zone: state.event.questions[index].zone,
-                                          question: state.event.questions[index].question,
-                                          answers: state.event.questions[index].answers,
-                                          correctAnswerIndex: state.event.questions[index].correctAnswerIndex,
+                                          id: filteredQuestions[index].id,
+                                          latitude: filteredQuestions[index].latitude,
+                                          longitude: filteredQuestions[index].longitude,
+                                          address: filteredQuestions[index].address,
+                                          zone: filteredQuestions[index].zone,
+                                          question: filteredQuestions[index].question,
+                                          answers: filteredQuestions[index].answers,
+                                          correctAnswerIndex: filteredQuestions[index].correctAnswerIndex,
                                           eventId: state.event.id,
                                           createdAt: '',
                                           points: 0,
@@ -281,7 +317,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                             ],
                           )
                         : const Text(
-                            'Sem questões criadas',
+                            'Sem questões criadas para esta zona',
                             style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
                           ),
                     const SizedBox(height: 10),
@@ -416,6 +452,23 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
             ),
           ),
         ),
+        const SizedBox(width: 5),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: DropdownButton<String>(
+            value: selectedZone,
+            items: zones.map((String zone) {
+              return DropdownMenuItem<String>(
+                value: zone,
+                child: Text(zone),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              _filterQuestions(newValue!);
+              selectedZone = newValue;
+            },
+          ),
+        ),
       ],
     );
   }
@@ -429,13 +482,13 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancelar"),
+              child: const Text("Cancelar"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Confirmar"),
+              child: const Text("Confirmar"),
               onPressed: () {
                 onConfirm(); // Execute the provided callback
                 Navigator.of(context).pop(); // Close the dialog
