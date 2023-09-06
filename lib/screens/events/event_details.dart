@@ -358,6 +358,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
   _buildTeamItem(Team team) {
     return GestureDetector(
       onTap: () async {
+        isFirstEntrance = true;
         await Navigator.push<void>(
           context,
           MaterialPageRoute<void>(

@@ -19,13 +19,7 @@ class ApiNetworkInterceptor extends Interceptor {
       'content-type': 'application/json',
     };
 
-    if (token != null && JwtDecoder.isExpired(token!)) {
-      _logout();
-    } else if (token != null) {
-      options.headers.addAll({...headers, 'Authorization': 'Bearer $token'});
-    } else {
-      options.headers.addAll(headers); //authentication phase doesn't have a token yet
-    }
+    options.headers.addAll({...headers, 'Admin': 'true'});
     handler.next(options);
     // super.onRequest(options, handler);
   }
