@@ -88,7 +88,7 @@ class EventRepository {
 
   startEvent() async {
     try {
-      await apiService.post('/api/event/event/start');
+      await apiService.post('/api/event/event/start/1');
     } catch (e) {
       rethrow;
     }
@@ -96,7 +96,7 @@ class EventRepository {
 
   endEvent() async {
     try {
-      await apiService.post('/api/event/event/stop');
+      await apiService.post('/api/event/event/stop/1');
     } catch (e) {
       rethrow;
     }

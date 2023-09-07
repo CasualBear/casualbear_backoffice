@@ -98,62 +98,6 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
       appBar: AppBar(
         toolbarHeight: 80, // Set the desired height here
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Text(
-              gameStarted ? 'Game Started' : 'Game Stoped',
-              style: TextStyle(color: gameStarted ? Colors.green : Colors.white),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(
-                Icons.play_arrow,
-                color: Colors.green,
-              ),
-              onPressed: () {
-                _showAlertDialog(
-                  context,
-                  "COMEÇAR",
-                  "Tem a certeza que quer começar o evento?",
-
-                  () {
-                    setState(() {
-                      gameStarted = true;
-                      EventRepository eventRepository = EventRepository(ApiService.shared);
-                      eventRepository.startEvent();
-                    });
-                  }, // Provide the start event callback
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 24),
-            child: IconButton(
-              icon: const Icon(
-                Icons.stop,
-                color: Colors.red,
-              ),
-              onPressed: () {
-                _showAlertDialog(
-                  context,
-                  "TERMINAR",
-                  "Tem a certeza que quer terminar o evento, isto terá implicações nos resultados e irá fazer reset a todos os dados?",
-                  () {
-                    setState(() {
-                      gameStarted = false;
-                      EventRepository eventRepository = EventRepository(ApiService.shared);
-                      eventRepository.endEvent();
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-        ],
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
         title: const Text(
@@ -174,9 +118,9 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is SingleEventGetLoaded) {
             event = state.event;
-            gameStarted = state.event.hasStarted;
 
             if (isFirstEntrance) {
+              gameStarted = state.event.hasStarted;
               allTeams = state.event.teams ?? [];
               allQuestions = state.event.questions;
               filteredTeams = List<Team>.from(allTeams);
@@ -191,6 +135,66 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: Text(
+                            gameStarted ? 'Game Started' : 'Game Stoped',
+                            style: TextStyle(color: gameStarted ? Colors.green : Colors.black),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.play_arrow,
+                              color: Colors.green,
+                            ),
+                            onPressed: () {
+                              _showAlertDialog(
+                                context,
+                                "COMEÇAR",
+                                "Tem a certeza que quer começar o evento?",
+
+                                () {
+                                  setState(() {
+                                    gameStarted = true;
+                                    EventRepository eventRepository = EventRepository(ApiService.shared);
+                                    eventRepository.startEvent();
+                                  });
+                                }, // Provide the start event callback
+                              );
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 24),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.stop,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              _showAlertDialog(
+                                context,
+                                "TERMINAR",
+                                "Tem a certeza que quer terminar o evento, isto terá implicações nos resultados e irá fazer reset a todos os dados?",
+                                () {
+                                  setState(() {
+                                    gameStarted = false;
+                                    EventRepository eventRepository = EventRepository(ApiService.shared);
+                                    eventRepository.endEvent();
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
