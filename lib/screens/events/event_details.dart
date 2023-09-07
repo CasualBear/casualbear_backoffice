@@ -554,13 +554,11 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
     final csvData = StringBuffer();
 
     // Add headers
-    csvData.writeln(
-        'ID,Total Points,Time Spent,Is Checked In,Is Verified,Name,Is Checked Overall,Zones,Created At,Updated At,Event ID');
+    csvData.writeln('Nome, Verificacao, Check-in');
 
     // Add data rows
     for (final team in teams) {
-      csvData.writeln(
-          '${team.id},${team.totalPoints},${team.timeSpent},${team.isCheckedIn},${team.isVerified},${team.name},${team.isCheckedOverall},${team.zones},${team.createdAt},${team.updatedAt},${team.eventId}');
+      csvData.writeln('${team.name},${team.isVerified},${team.isCheckedIn}');
     }
 
     final blob = html.Blob([Uint8List.fromList(csvData.toString().codeUnits)]);
