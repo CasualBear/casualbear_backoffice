@@ -8,10 +8,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthenticationRepository repository;
   AuthenticationCubit(this.repository) : super(AuthenticationInitial());
 
-  void login(String username, String password) async {
+  void login(String username, String password, String deviceId) async {
     emit(AuthenticationLoading());
     try {
-      String response = await repository.login(username, password);
+      String response = await repository.login(username, password, deviceId);
       saveToken(response);
       emit(AuthenticationLoaded());
     } catch (e) {
