@@ -3,6 +3,8 @@ import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/models/question_request.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
+import 'package:casualbear_backoffice/network/services/api_service.dart';
+import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:casualbear_backoffice/screens/events/team_scores.dart';
@@ -31,6 +33,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
   List<Question> filteredQuestions = []; // Store filtered teams
 
   bool isFirstEntrance = true;
+  bool gameStarted = false;
 
   final List<String> zones = [
     "All",
@@ -98,6 +101,13 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
+            child: Text(
+              gameStarted ? 'Game Started' : 'Game Stoped',
+              style: TextStyle(color: gameStarted ? Colors.green : Colors.white),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
             child: IconButton(
               icon: const Icon(
                 Icons.play_arrow,
@@ -109,7 +119,13 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   "COMEÇAR",
                   "Tem a certeza que quer começar o evento?",
 
-                  () {}, // Provide the start event callback
+                  () {
+                    setState(() {
+                      gameStarted = true;
+                      EventRepository eventRepository = EventRepository(ApiService.shared);
+                      eventRepository.startEvent();
+                    });
+                  }, // Provide the start event callback
                 );
               },
             ),
@@ -126,7 +142,13 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   context,
                   "TERMINAR",
                   "Tem a certeza que quer terminar o evento, isto terá implicações nos resultados e irá fazer reset a todos os dados?",
-                  () {},
+                  () {
+                    setState(() {
+                      gameStarted = false;
+                      EventRepository eventRepository = EventRepository(ApiService.shared);
+                      eventRepository.endEvent();
+                    });
+                  },
                 );
               },
             ),
@@ -152,6 +174,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is SingleEventGetLoaded) {
             event = state.event;
+            gameStarted = state.event.hasStarted;
 
             if (isFirstEntrance) {
               allTeams = state.event.teams ?? [];

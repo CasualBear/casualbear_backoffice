@@ -14,6 +14,7 @@ class Event {
   final String createdAt;
   final String updatedAt;
   final List<Question> questions;
+  final bool hasStarted;
   final List<Team>? teams;
 
   Event({
@@ -21,6 +22,7 @@ class Event {
     required this.name,
     required this.description,
     required this.selectedColor,
+    required this.hasStarted,
     required this.rawUrl,
     required this.teams,
     required this.createdAt,

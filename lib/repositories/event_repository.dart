@@ -86,6 +86,22 @@ class EventRepository {
     }
   }
 
+  startEvent() async {
+    try {
+      await apiService.post('/api/event/event/start');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  endEvent() async {
+    try {
+      await apiService.post('/api/event/event/stop');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   deleteEvent(String eventId) async {
     try {
       await apiService.delete('/api/event/events/$eventId');
