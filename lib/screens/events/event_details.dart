@@ -12,6 +12,9 @@ import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget
 import 'package:casualbear_backoffice/screens/events/widgets/question_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:excel/excel.dart';
+import 'dart:typed_data';
+import 'dart:html' as html;
 
 class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({Key? key}) : super(key: key);
@@ -211,12 +214,22 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Equipas dentro do Evento',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Equipas dentro do Evento',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        ElevatedButton(
+                            onPressed: () {
+                              exportToExcel(state.event.teams ?? []);
+                            },
+                            child: const Text("Exportar para Excel")),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     state.event.teams?.isNotEmpty ?? false
@@ -535,5 +548,28 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
         );
       },
     );
+  }
+
+  void exportToExcel(List<Team> teams) {
+    final csvData = StringBuffer();
+
+    // Add headers
+    csvData.writeln(
+        'ID,Total Points,Time Spent,Is Checked In,Is Verified,Name,Is Checked Overall,Zones,Created At,Updated At,Event ID');
+
+    // Add data rows
+    for (final team in teams) {
+      csvData.writeln(
+          '${team.id},${team.totalPoints},${team.timeSpent},${team.isCheckedIn},${team.isVerified},${team.name},${team.isCheckedOverall},${team.zones},${team.createdAt},${team.updatedAt},${team.eventId}');
+    }
+
+    final blob = html.Blob([Uint8List.fromList(csvData.toString().codeUnits)]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..target = 'webbrowser'
+      ..download = 'teams.csv'; // Specify the file name with a .csv extension
+    anchor.click();
+
+    html.Url.revokeObjectUrl(url);
   }
 }
