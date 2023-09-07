@@ -25,6 +25,7 @@ class AddQuestionDialog extends StatefulWidget {
 class AddQuestionDialogState extends State<AddQuestionDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _questionController;
+  late TextEditingController _pointsController;
   late TextEditingController _locationController;
   late LatLong questionCoordinates;
   String? selectedZone;
@@ -53,6 +54,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
     super.initState();
 
     _questionController = TextEditingController();
+    _pointsController = TextEditingController();
     _locationController = TextEditingController();
     _answerControllers.add(TextEditingController());
 
@@ -63,6 +65,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   void dispose() {
     _questionController.dispose();
     _locationController.dispose();
+    _pointsController.dispose();
     for (var controller in _answerControllers) {
       controller.dispose();
     }
@@ -131,6 +134,19 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 );
               },
               readOnly: true,
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _pointsController,
+              decoration: const InputDecoration(
+                labelText: 'Pontos',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Introduza pontos';
+                }
+                return null;
+              },
             ),
             Row(
               children: [
@@ -297,7 +313,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 latitude: questionCoordinates.latitude.toString(),
                 longitude: questionCoordinates.longitude.toString(),
                 address: _locationController.text,
-                eventId: widget.event.id, createdAt: '', points: 0, updatedAt: '',
+                eventId: widget.event.id, createdAt: '', points: int.parse(_pointsController.text), updatedAt: '',
               );
 
               widget.onAddQuestion(question);

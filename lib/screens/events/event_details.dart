@@ -325,7 +325,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                           correctAnswerIndex: filteredQuestions[index].correctAnswerIndex,
                                           eventId: state.event.id,
                                           createdAt: '',
-                                          points: 0,
+                                          points: filteredQuestions[index].points,
                                           updatedAt: '',
                                         ),
                                         onEditQuestion: (question) {
@@ -425,7 +425,10 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   children: [
                     const Text('Estado:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
-                    Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : team.isVerified),
+                    Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : team.isVerified,
+                        style: TextStyle(
+                            color: team.isVerified != "Approved" ? Colors.red : Colors.green,
+                            fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 5),
@@ -433,7 +436,9 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   children: [
                     const Text('Check-in:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
-                    Text(!team.isCheckedIn ? 'N/A' : 'Checked-in ✅'),
+                    Text(!team.isCheckedIn ? 'N/A' : 'Checked-in ✅',
+                        style: TextStyle(
+                            color: !team.isCheckedIn ? Colors.red : Colors.green, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 5),

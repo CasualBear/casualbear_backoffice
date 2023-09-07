@@ -87,9 +87,20 @@ class QuestionItemState extends State<QuestionItem> {
                         fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
                       ),
                   children: [
+                    const TextSpan(text: 'Id: ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    TextSpan(text: widget.question.id.toString()),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
                     const TextSpan(
                         text: 'É Visivel? : ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-                    TextSpan(text: widget.question.isVisible ? "Sim" : 'Não'),
+                    TextSpan(text: widget.question.isVisible ? "Não" : 'Sim'),
                   ],
                 ),
               ),
