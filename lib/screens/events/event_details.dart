@@ -79,7 +79,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
 
           team.members?.forEach((element) {
             stringTeamElements +=
-                ',${element.address},${element.email},${element.nosCard},${element.postalCode},${element.createdAt}';
+                ',${element.address},${element.email},${element.nosCard},${element.postalCode},${element.createdAt},${element.phone}';
           });
 
           return stringTeamElements.toLowerCase().contains(query.toLowerCase());
