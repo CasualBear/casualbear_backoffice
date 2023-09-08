@@ -73,8 +73,16 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
       });
     } else {
       setState(() {
+        var stringTeamElements;
         filteredTeams = allTeams.where((team) {
-          return team.name.toLowerCase().startsWith(query.toLowerCase());
+          stringTeamElements = team.name;
+
+          team.members?.forEach((element) {
+            stringTeamElements +=
+                ',${element.address},${element.email},${element.nosCard},${element.postalCode},${element.createdAt}';
+          });
+
+          return stringTeamElements.toLowerCase().contains(query.toLowerCase());
         }).toList();
       });
     }
