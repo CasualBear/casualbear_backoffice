@@ -55,10 +55,29 @@ class TeamCubit extends Cubit<TeamState> {
     }
   }
 
+  void deleteTeamMember(String teamId, String userId) async {
+    try {
+      await repository.deleteTeamMember(teamId, userId);
+      emit(TeamMemberDeleted());
+    } catch (e) {
+      throw ();
+    }
+  }
+
   void updateTeamMember(User user) async {
     emit(UpdateTeamMemberLoading());
     try {
       await repository.updateTeamMember(user);
+      emit(UpdateTeamMemberLoaded());
+    } catch (e) {
+      emit(UpdateTeamMemberError());
+    }
+  }
+
+  void addTeamMember(String teamId, User user) async {
+    emit(UpdateTeamMemberLoading());
+    try {
+      await repository.addTeamMember(teamId, user);
       emit(UpdateTeamMemberLoaded());
     } catch (e) {
       emit(UpdateTeamMemberError());

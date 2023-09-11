@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/models/update_team_request.dart';
+import 'package:casualbear_backoffice/network/models/user.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/team_edit.dart';
@@ -48,9 +49,14 @@ class _TeamDetailsState extends State<TeamDetails> {
           ),
         ),
         body: BlocConsumer<TeamCubit, TeamState>(
+          listenWhen: (previous, current) => current is TeamMemberDeleted,
           buildWhen: (previous, current) =>
               current is GetTeamLoaded || current is GetTeamError || current is GetTeamLoading,
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is TeamMemberDeleted) {
+              BlocProvider.of<TeamCubit>(context).getTeamDetails(widget.eventId, widget.teamId);
+            }
+          },
           builder: (context, state) {
             if (state is GetTeamLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -153,13 +159,56 @@ class _TeamDetailsState extends State<TeamDetails> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Elementos da Equipa',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Elementos da Equipa',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Visibility(
+                            visible: (state.team?.members!.length)! < 4,
+                            child: GestureDetector(
+                              child: const Icon(Icons.add),
+                              onTap: () async {
+                                await Navigator.push<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => TeamEdit(
+                                      user: User(
+                                          id: 0,
+                                          name: '',
+                                          email: '',
+                                          role: null,
+                                          password: '',
+                                          dateOfBirth: DateTime(2000, 1, 1),
+                                          cc: '',
+                                          phone: '',
+                                          address: '',
+                                          nosCard: '',
+                                          tShirtSize: '',
+                                          isCheckedPrivacyData: false,
+                                          isCheckedTermsConditions: false,
+                                          isCaptain: false,
+                                          teamId: '',
+                                          createdAt: DateTime(2000, 1, 1),
+                                          updatedAt: DateTime(2000, 1, 1),
+                                          postalCode: ''),
+                                      teamId: team!.id,
+                                      isEdit: false,
+                                    ),
+                                  ),
+                                );
+                                // ignore: use_build_context_synchronously
+                                BlocProvider.of<TeamCubit>(context).getTeamDetails(widget.eventId, widget.teamId);
+                              },
+                            ),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 20),
                       Padding(
@@ -188,8 +237,8 @@ class _TeamDetailsState extends State<TeamDetails> {
                                                   await Navigator.push<void>(
                                                     context,
                                                     MaterialPageRoute<void>(
-                                                      builder: (BuildContext context) =>
-                                                          TeamEdit(user: team!.members![index]),
+                                                      builder: (BuildContext context) => TeamEdit(
+                                                          isEdit: true, user: team!.members![index], teamId: team!.id),
                                                     ),
                                                   );
                                                   // ignore: use_build_context_synchronously
@@ -228,7 +277,19 @@ class _TeamDetailsState extends State<TeamDetails> {
                                         _builtText('Código postal', team!.members?[index].postalCode),
                                         const SizedBox(height: 8),
                                         _builtText('Morada', team!.members?[index].address),
-                                        const SizedBox(height: 10),
+                                        const SizedBox(height: 40),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            InkWell(
+                                                onTap: () {
+                                                  BlocProvider.of<TeamCubit>(context).deleteTeamMember(
+                                                      widget.teamId, team!.members![index].id.toString());
+                                                },
+                                                child: const Icon(Icons.delete, color: Colors.red))
+                                          ],
+                                        )
                                       ],
                                     ),
                                   ),
@@ -236,7 +297,7 @@ class _TeamDetailsState extends State<TeamDetails> {
                               },
                               options: CarouselOptions(
                                 padEnds: false,
-                                height: 400,
+                                height: 500,
                                 aspectRatio: 2.0, // Adjust aspectRatio to your preference
                                 viewportFraction: 0.2, // Adjust viewportFraction to your preference
                                 enableInfiniteScroll: false, // Disable infinite scroll

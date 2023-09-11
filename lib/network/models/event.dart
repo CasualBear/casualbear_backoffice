@@ -1,5 +1,3 @@
-import 'package:casualbear_backoffice/network/models/question.dart';
-import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'event.g.dart';

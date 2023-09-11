@@ -50,3 +50,5 @@ class GetTeamLoaded extends TeamState {
 }
 
 class GetTeamError extends TeamState {}
+
+class TeamMemberDeleted extends TeamState {}

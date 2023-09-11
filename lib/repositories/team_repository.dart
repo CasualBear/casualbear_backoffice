@@ -74,6 +74,23 @@ class TeamRepository {
     }
   }
 
+  deleteTeamMember(String teamId, String userId) async {
+    try {
+      await apiService.delete('/api/teams/$teamId/users/$userId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  addTeamMember(String teamId, User user) async {
+    try {
+      final body = jsonEncode(user);
+      await apiService.post('/api/teams/$teamId/add-users', body: body);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   deleteTeam(String teamId, String userId) async {
     try {
       await apiService.get('/api/teams/$teamId/users/$userId');

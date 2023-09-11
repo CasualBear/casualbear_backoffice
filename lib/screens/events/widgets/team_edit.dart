@@ -7,8 +7,10 @@ import 'package:intl/intl.dart';
 // ignore: must_be_immutable
 class TeamEdit extends StatefulWidget {
   User user; // Pass the team member data to edit.
+  final bool isEdit;
+  final int teamId;
 
-  TeamEdit({super.key, required this.user});
+  TeamEdit({super.key, required this.user, required this.isEdit, required this.teamId});
 
   @override
   State<TeamEdit> createState() => _TeamEditState();
@@ -291,7 +293,11 @@ class _TeamEditState extends State<TeamEdit> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             updateUserDataFromControllers();
-                            BlocProvider.of<TeamCubit>(context).updateTeamMember(widget.user);
+                            if (widget.isEdit) {
+                              BlocProvider.of<TeamCubit>(context).updateTeamMember(widget.user);
+                            } else {
+                              BlocProvider.of<TeamCubit>(context).addTeamMember(widget.teamId.toString(), widget.user);
+                            }
                           }
                         },
                         child: const Text('Salvar Dados'));

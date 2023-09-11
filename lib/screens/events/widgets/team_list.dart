@@ -1,4 +1,3 @@
-import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:flutter/material.dart';
