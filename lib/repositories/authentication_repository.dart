@@ -17,7 +17,6 @@ class AuthenticationRepository {
         throw Exception();
       }
     } catch (e) {
-      print(e);
       throw Exception();
     }
   }

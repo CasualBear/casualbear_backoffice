@@ -14,7 +14,7 @@ class Event {
   final String createdAt;
   final String updatedAt;
   final List<Question> questions;
-  final bool hasStarted;
+  final String hasStarted;
   final List<Team>? teams;
 
   Event({

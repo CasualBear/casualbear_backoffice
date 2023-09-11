@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/models/question.dart';

@@ -1,7 +1,9 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:casualbear_backoffice/network/models/update_team_request.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/repositories/team_repository.dart';
+// ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 
 part 'team_state.dart';

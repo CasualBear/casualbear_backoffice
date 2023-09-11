@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'dart:convert';
 

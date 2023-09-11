@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/event.dart';
@@ -37,7 +39,7 @@ class EventRepository {
     try {
       var url = Uri.parse("https://casuabearapi.herokuapp.com/api/event/events/$eventId");
       var request = http.MultipartRequest("PUT", url);
-      request.files.add(await http.MultipartFile.fromBytes('iconFile', selectedFile,
+      request.files.add(http.MultipartFile.fromBytes('iconFile', selectedFile,
           contentType: MediaType('application', 'json'), filename: "icon"));
 
       request.fields['name'] = name; // Add name field

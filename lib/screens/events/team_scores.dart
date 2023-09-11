@@ -42,6 +42,7 @@ class _TeamScoresState extends State<TeamScores> {
                     DataTable(
                       columnSpacing: 16.0,
                       headingRowHeight: 48.0,
+                      // ignore: deprecated_member_use
                       dataRowHeight: 56.0,
                       columns: const <DataColumn>[
                         DataColumn(

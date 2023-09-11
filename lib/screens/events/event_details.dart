@@ -1,20 +1,12 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casualbear_backoffice/network/models/event.dart';
-import 'package:casualbear_backoffice/network/models/question.dart';
-import 'package:casualbear_backoffice/network/models/question_request.dart';
-import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
-import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:casualbear_backoffice/screens/events/team_scores.dart';
-import 'package:casualbear_backoffice/screens/events/widgets/add_question_widget.dart';
-import 'package:casualbear_backoffice/screens/events/widgets/question_item.dart';
+import 'package:casualbear_backoffice/screens/events/widgets/question_list.dart';
+import 'package:casualbear_backoffice/screens/events/widgets/team_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:excel/excel.dart';
-import 'dart:typed_data';
-import 'dart:html' as html;
 
 class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({Key? key}) : super(key: key);
@@ -26,81 +18,13 @@ class EventDetailsScreen extends StatefulWidget {
 class EventDetailsScreenState extends State<EventDetailsScreen> {
   String eventId = "1";
   Event? event;
-  final CarouselController _carouselController = CarouselController();
-  final CarouselController _questionsCarouselController = CarouselController();
-  TextEditingController searchController = TextEditingController();
-  List<Team> allTeams = []; // Store all teams
-  List<Team> filteredTeams = []; // Store filtered teams
-
-  List<Question> allQuestions = []; // Store all teams
-  List<Question> filteredQuestions = []; // Store filtered teams
-
   bool isFirstEntrance = true;
-  bool gameStarted = false;
-
-  final List<String> zones = [
-    "All",
-    "ZoneA",
-    "ZoneAChallenges",
-    "ZoneB",
-    "ZoneBChallenges",
-    "ZoneC",
-    "ZoneCChallenges",
-    "ZoneD",
-    "ZoneDChallenges",
-    "ZoneE",
-    "ZoneEChallenges",
-  ];
-
-  String selectedZone = "All";
+  String gameStarted = 'Pre Game';
 
   @override
   void initState() {
     BlocProvider.of<EventCubit>(context).getEvent("1");
     super.initState();
-  }
-
-  void addQuestion(QuestionRequest question) {
-    isFirstEntrance = true;
-    BlocProvider.of<EventCubit>(context).addQuestion(question, eventId);
-  }
-
-  void _filterTeams(String query) {
-    filteredTeams.clear();
-    if (query.isEmpty) {
-      setState(() {
-        filteredTeams = List<Team>.from(allTeams);
-      });
-    } else {
-      setState(() {
-        var stringTeamElements;
-        filteredTeams = allTeams.where((team) {
-          stringTeamElements = team.name;
-
-          team.members?.forEach((element) {
-            stringTeamElements +=
-                ',${element.address},${element.email},${element.nosCard},${element.postalCode},${element.createdAt},${element.phone}';
-          });
-
-          return stringTeamElements.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      });
-    }
-  }
-
-  void _filterQuestions(String zone) {
-    filteredQuestions.clear();
-    if (zone == "All") {
-      setState(() {
-        filteredQuestions = List<Question>.from(allQuestions);
-      });
-    } else {
-      setState(() {
-        filteredQuestions = allQuestions.where((question) {
-          return question.zone.toLowerCase().startsWith(zone.toLowerCase());
-        }).toList();
-      });
-    }
   }
 
   @override
@@ -132,10 +56,6 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
 
             if (isFirstEntrance) {
               gameStarted = state.event.hasStarted;
-              allTeams = state.event.teams ?? [];
-              allQuestions = state.event.questions;
-              filteredTeams = List<Team>.from(allTeams);
-              filteredQuestions = List<Question>.from(allQuestions);
               isFirstEntrance = false;
             }
 
@@ -147,14 +67,51 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
+                    const Text(
+                      'Gerir Jogo',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: Text(
-                            gameStarted ? 'Game Started' : 'Game Stoped',
-                            style: TextStyle(color: gameStarted ? Colors.green : Colors.black),
+                            gameStarted.toUpperCase(),
+                            style: TextStyle(
+                                color: gameStarted == "game_started"
+                                    ? Colors.green
+                                    : gameStarted == 'game_ended'
+                                        ? Colors.red
+                                        : Colors.grey),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.pause,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              _showAlertDialog(
+                                context,
+                                "Reset",
+                                "Tem a certeza que quer fazer reser ao evento?",
+
+                                () {
+                                  setState(() {
+                                    gameStarted = 'pre_game';
+                                    EventRepository eventRepository = EventRepository(ApiService.shared);
+                                    eventRepository.startEvent();
+                                  });
+                                }, // Provide the start event callback
+                              );
+                            },
                           ),
                         ),
                         Padding(
@@ -172,7 +129,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
 
                                 () {
                                   setState(() {
-                                    gameStarted = true;
+                                    gameStarted = 'game_started';
                                     EventRepository eventRepository = EventRepository(ApiService.shared);
                                     eventRepository.startEvent();
                                   });
@@ -195,7 +152,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                 "Tem a certeza que quer terminar o evento, isto terá implicações nos resultados e irá fazer reset a todos os dados?",
                                 () {
                                   setState(() {
-                                    gameStarted = false;
+                                    gameStarted = 'game_ended';
                                     EventRepository eventRepository = EventRepository(ApiService.shared);
                                     eventRepository.endEvent();
                                   });
@@ -206,82 +163,9 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextField(
-                        controller: searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Procurar Equipas (Nome)',
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                        onChanged: (value) {
-                          // Call filter function with updated input
-                          _filterTeams(value);
-                        },
-                      ),
-                    ),
                     const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Equipas dentro do Evento',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        ElevatedButton(
-                            onPressed: () {
-                              exportToExcel(state.event.teams ?? []);
-                            },
-                            child: const Text("Exportar para Excel")),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    state.event.teams?.isNotEmpty ?? false
-                        ? CarouselSlider.builder(
-                            carouselController: _carouselController,
-                            itemCount: filteredTeams.length,
-                            itemBuilder: (BuildContext context, int index, int realIndex) {
-                              if (filteredTeams.isNotEmpty) {
-                                return _buildTeamItem(filteredTeams[index]);
-                              } else {
-                                return const Text("Sem equipas inscritas");
-                              }
-                            },
-                            options: CarouselOptions(
-                              padEnds: false,
-                              height: 200,
-                              aspectRatio: 2.0, // Adjust aspectRatio to your preference
-                              viewportFraction: 0.2, // Adjust viewportFraction to your preference
-                              enableInfiniteScroll: false, // Disable infinite scroll
-                              autoPlay: false, // Disable auto-play
-                              initialPage: 0, // Set the initial page to 0 (start on the left)
-                            ),
-                          )
-                        : const Text("Sem equipas inscritas"),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () {
-                            _carouselController.previousPage();
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_forward),
-                          onPressed: () {
-                            _carouselController.nextPage();
-                          },
-                        ),
-                      ],
-                    ),
                     const Text(
-                      'Informação em tempo real',
+                      'Opções',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -300,7 +184,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                 ),
                               );
                             },
-                            child: const Text('Ver Classificação', style: TextStyle(color: Colors.black)),
+                            child: Text('Ver Classificação'.toUpperCase(), style: const TextStyle(color: Colors.black)),
                           ),
                         ),
                         const SizedBox(width: 8), // Add some spacing between the buttons
@@ -309,88 +193,45 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                             onPressed: () {
                               // Handle Ver Localização em tempo real button tap
                             },
-                            child: const Text('Ver Localização em tempo real', style: TextStyle(color: Colors.black)),
+                            child: Text('Ver Localização de Equipas'.toUpperCase(),
+                                style: const TextStyle(color: Colors.black)),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const SizedBox(height: 10),
-                    _buildQuestionTitle(),
-                    const SizedBox(height: 16),
-                    filteredQuestions.isNotEmpty
-                        ? Column(
-                            children: [
-                              CarouselSlider.builder(
-                                carouselController: _questionsCarouselController,
-                                itemCount: filteredQuestions.length,
-                                itemBuilder: (BuildContext context, int index, int realIndex) {
-                                  return Column(
-                                    children: [
-                                      QuestionItem(
-                                        event: event!,
-                                        onDeleteQuestion: (question) {
-                                          isFirstEntrance = true;
-                                          BlocProvider.of<EventCubit>(context)
-                                              .deleteQuestion(question.id.toString(), eventId);
-                                        },
-                                        question: Question(
-                                          isVisible: filteredQuestions[index].isVisible,
-                                          id: filteredQuestions[index].id,
-                                          latitude: filteredQuestions[index].latitude,
-                                          longitude: filteredQuestions[index].longitude,
-                                          address: filteredQuestions[index].address,
-                                          zone: filteredQuestions[index].zone,
-                                          question: filteredQuestions[index].question,
-                                          answers: filteredQuestions[index].answers,
-                                          correctAnswerIndex: filteredQuestions[index].correctAnswerIndex,
-                                          eventId: state.event.id,
-                                          createdAt: '',
-                                          points: filteredQuestions[index].points,
-                                          updatedAt: '',
-                                        ),
-                                        onEditQuestion: (question) {
-                                          BlocProvider.of<EventCubit>(context).updateQuestion(question, eventId);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                                options: CarouselOptions(
-                                  padEnds: false,
-                                  height: 600,
-                                  aspectRatio: 2.0, // Adjust aspectRatio to your preference
-                                  viewportFraction: 0.3, // Adjust viewportFraction to your preference
-                                  enableInfiniteScroll: false, // Disable infinite scroll
-                                  autoPlay: false, // Disable auto-play
-                                  initialPage: 0, // Set the initial page to 0 (start on the left)
-                                ),
-                              )
-                            ],
-                          )
-                        : const Text(
-                            'Sem questões criadas para esta zona',
-                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
-                          ),
-                    const SizedBox(height: 10),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () {
-                            _questionsCarouselController.previousPage();
-                          },
+                        Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        TeamList(eventId: state.event.id.toString(), teamList: state.event.teams ?? []),
+                                  ),
+                                );
+                              },
+                              child: Text('Ver Equipas'.toUpperCase(), style: const TextStyle(color: Colors.black))),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_forward),
-                          onPressed: () {
-                            _questionsCarouselController.nextPage();
-                          },
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        QuestionList(event: state.event, questionList: state.event.questions),
+                                  ),
+                                );
+                              },
+                              child: Text('Ver Questões'.toUpperCase(), style: const TextStyle(color: Colors.black))),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -400,134 +241,6 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
           }
         },
       ),
-    );
-  }
-
-  _buildTeamItem(Team team) {
-    return GestureDetector(
-      onTap: () async {
-        isFirstEntrance = true;
-        await Navigator.push<void>(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) => TeamDetails(
-              team: team,
-            ),
-          ),
-        );
-
-        // ignore: use_build_context_synchronously
-        BlocProvider.of<EventCubit>(context).getEvent(eventId);
-      },
-      child: Card(
-        color: Colors.grey[200],
-        child: ListTile(
-          title: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text('Nome da equipa: ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(team.name),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    const Text('Criação:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(team.createdAt.toIso8601String(), style: const TextStyle(fontSize: 13)),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    const Text('Estado:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : team.isVerified,
-                        style: TextStyle(
-                            color: team.isVerified != "Approved" ? Colors.red : Colors.green,
-                            fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    const Text('Check-in:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(!team.isCheckedIn ? 'N/A' : 'Checked-in ✅',
-                        style: TextStyle(
-                            color: !team.isCheckedIn ? Colors.red : Colors.green, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    const Text('Pontos actuais:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(team.totalPoints.toString()),
-                  ],
-                ),
-                const SizedBox(height: 5),
-              ]),
-          trailing: const Icon(Icons.arrow_forward),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuestionTitle() {
-    return Row(
-      children: [
-        const Text(
-          'Criar Questão',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(width: 6),
-        GestureDetector(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) => AddQuestionDialog(
-                event: event!,
-                onAddQuestion: addQuestion,
-              ),
-            );
-          },
-          child: Container(
-            color: Colors.black,
-            child: const Padding(
-              padding: EdgeInsets.all(4),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 5),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: DropdownButton<String>(
-            value: selectedZone,
-            items: zones.map((String zone) {
-              return DropdownMenuItem<String>(
-                value: zone,
-                child: Text(zone),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              _filterQuestions(newValue!);
-              selectedZone = newValue;
-            },
-          ),
-        ),
-      ],
     );
   }
 
@@ -556,26 +269,5 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
         );
       },
     );
-  }
-
-  void exportToExcel(List<Team> teams) {
-    final csvData = StringBuffer();
-
-    // Add headers
-    csvData.writeln('Nome, Verificacao, Check-in');
-
-    // Add data rows
-    for (final team in teams) {
-      csvData.writeln('${team.name},${team.isVerified},${team.isCheckedIn}');
-    }
-
-    final blob = html.Blob([Uint8List.fromList(csvData.toString().codeUnits)]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
-      ..target = 'webbrowser'
-      ..download = 'teams.csv'; // Specify the file name with a .csv extension
-    anchor.click();
-
-    html.Url.revokeObjectUrl(url);
   }
 }

@@ -7,7 +7,6 @@ import 'package:casualbear_backoffice/repositories/team_repository.dart';
 import 'package:casualbear_backoffice/screens/authentication/cubit/authentication_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
-import 'package:casualbear_backoffice/screens/events/event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
