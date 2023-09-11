@@ -8,7 +8,7 @@ class Team {
   final int id;
   final int totalPoints;
   final String name;
-  final String isVerified;
+  String isVerified;
   final bool isCheckedIn;
   final bool isCheckedOverall;
   final String zones;
