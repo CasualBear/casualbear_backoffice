@@ -56,6 +56,16 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
+  void getQuestions(int id) async {
+    emit(GetQuestionsLoading());
+    try {
+      List<Question> response = await repository.getQuestions(id.toString());
+      emit(GetQuestionLoaded(questions: response));
+    } catch (e) {
+      emit(GetQuestionsError());
+    }
+  }
+
   void getScores() async {
     emit(GetScoresLoading());
     try {

@@ -1,4 +1,5 @@
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
+import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/team_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,9 +9,8 @@ import 'dart:html' as html;
 import '../../../network/models/team.dart';
 
 class TeamList extends StatefulWidget {
-  final List<Team> teamList;
   final String eventId;
-  const TeamList({super.key, required this.teamList, required this.eventId});
+  const TeamList({super.key, required this.eventId});
 
   @override
   State<TeamList> createState() => _TeamListState();
@@ -20,12 +20,12 @@ class _TeamListState extends State<TeamList> {
   TextEditingController searchController = TextEditingController();
   bool isFirstEntrance = true;
   List<Team> filteredTeams = [];
+  List<Team> allTeams = [];
 
   @override
   void initState() {
     if (isFirstEntrance) {
-      filteredTeams = List<Team>.from(widget.teamList);
-      isFirstEntrance = false;
+      BlocProvider.of<TeamCubit>(context).getTeams(widget.eventId);
     }
     super.initState();
   }
@@ -47,84 +47,110 @@ class _TeamListState extends State<TeamList> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 24, right: 24),
-          child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                  hintText: 'Procurar Equipas (Nome)',
-                  prefixIcon: Icon(Icons.search),
-                ),
-                onChanged: (value) {
-                  // Call filter function with updated input
-                  _filterTeams(value);
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Text(
-                  'Equipas dentro do Evento',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+      body: BlocConsumer<TeamCubit, TeamState>(
+        buildWhen: (previous, current) =>
+            current is GetTeamsLoading || current is GetTeamsLoaded || current is GetTeamError,
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is GetTeamsLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is GetTeamsLoaded) {
+            if (isFirstEntrance) {
+              filteredTeams = List<Team>.from(state.teams as Iterable);
+              allTeams = List<Team>.from(state.teams as Iterable);
+              isFirstEntrance = false;
+            }
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24),
+                child: Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Procurar Equipas (Nome)',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        // Call filter function with updated input
+                        _filterTeams(value);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 5),
-                ElevatedButton(
-                    onPressed: () {
-                      exportToExcel(widget.teamList);
-                    },
-                    child: const Text("Exportar para Excel")),
-              ],
-            ),
-            const SizedBox(height: 8),
-            widget.teamList.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: filteredTeams.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (filteredTeams.isNotEmpty) {
-                        return _buildTeamItem(filteredTeams[index]);
-                      } else {
-                        return const Text("Sem equipas inscritas");
-                      }
-                    },
-                  )
-                : const Text("Sem equipas inscritas"),
-            const SizedBox(height: 10),
-          ]),
-        ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Text(
+                        'Equipas dentro do Evento',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      ElevatedButton(
+                          onPressed: () {
+                            exportToExcel(state.teams ?? []);
+                          },
+                          child: const Text("Exportar para Excel")),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  state.teams!.isNotEmpty
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filteredTeams.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (filteredTeams.isNotEmpty) {
+                              return _buildTeamItem(filteredTeams[index]);
+                            } else {
+                              return const Text("Sem equipas inscritas");
+                            }
+                          },
+                        )
+                      : const Text("Sem equipas inscritas"),
+                  const SizedBox(height: 10),
+                ]),
+              ),
+            );
+          } else {
+            return const Text("Teams not found");
+          }
+        },
       ),
     );
   }
 
   void _filterTeams(String query) {
-    filteredTeams.clear();
-    if (query.isEmpty) {
-      setState(() {
-        filteredTeams = List<Team>.from(widget.teamList);
-      });
-    } else {
-      setState(() {
-        String stringTeamElements;
-        filteredTeams = widget.teamList.where((team) {
-          stringTeamElements = team.name;
-
-          team.members?.forEach((element) {
-            stringTeamElements +=
-                ',${element.address},${element.email},${element.nosCard},${element.postalCode},${element.createdAt},${element.phone}';
-          });
-
-          return stringTeamElements.toLowerCase().contains(query.toLowerCase());
+    setState(() {
+      if (query.isEmpty) {
+        filteredTeams = List<Team>.from(allTeams);
+      } else {
+        filteredTeams = allTeams.where((team) {
+          return _teamMatchesQuery(team, query);
         }).toList();
-      });
+      }
+    });
+  }
+
+  bool _teamMatchesQuery(Team team, String query) {
+    // Check if the team name matches the query
+    if (team.name.toLowerCase().contains(query.toLowerCase())) {
+      return true;
     }
+
+    // Check if any member attributes match the query
+    for (final member in team.members ?? []) {
+      final searchableString =
+          '${member.address},${member.email},${member.nosCard},${member.postalCode},${member.createdAt},${member.phone}';
+      if (searchableString.toLowerCase().contains(query.toLowerCase())) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   _buildTeamItem(Team team) {
@@ -135,13 +161,14 @@ class _TeamListState extends State<TeamList> {
           context,
           MaterialPageRoute<void>(
             builder: (BuildContext context) => TeamDetails(
-              team: team,
+              teamId: team.id.toString(),
+              eventId: widget.eventId.toString(),
             ),
           ),
         );
 
         // ignore: use_build_context_synchronously
-        BlocProvider.of<EventCubit>(context).getEvent(widget.eventId);
+        BlocProvider.of<TeamCubit>(context).getTeams(widget.eventId);
       },
       child: Card(
         color: Colors.grey[200],

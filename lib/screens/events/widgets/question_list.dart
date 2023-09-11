@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class QuestionList extends StatefulWidget {
-  final List<Question> questionList;
   final Event event;
-  const QuestionList({super.key, required this.questionList, required this.event});
+  const QuestionList({super.key, required this.event});
 
   @override
   State<QuestionList> createState() => _QuestionListState();
@@ -19,6 +18,7 @@ class QuestionList extends StatefulWidget {
 class _QuestionListState extends State<QuestionList> {
   bool isFirstEntrance = true;
   List<Question> filteredQuestions = [];
+  List<Question> allQuestions = [];
 
   final List<String> zones = [
     "All",
@@ -37,8 +37,7 @@ class _QuestionListState extends State<QuestionList> {
   @override
   void initState() {
     if (isFirstEntrance) {
-      filteredQuestions = List<Question>.from(widget.questionList);
-      isFirstEntrance = false;
+      BlocProvider.of<EventCubit>(context).getQuestions(widget.event.id);
     }
     super.initState();
   }
@@ -65,58 +64,75 @@ class _QuestionListState extends State<QuestionList> {
   }
 
   _buildList() {
-    return filteredQuestions.isNotEmpty
-        ? SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24),
-              child: Column(
-                children: [
-                  _buildQuestionTitle(),
-                  const SizedBox(height: 8),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: filteredQuestions.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          QuestionItem(
-                            event: widget.event,
-                            onDeleteQuestion: (question) {
-                              isFirstEntrance = true;
-                              BlocProvider.of<EventCubit>(context)
-                                  .deleteQuestion(question.id.toString(), widget.event.id.toString());
-                            },
-                            question: Question(
-                              isVisible: filteredQuestions[index].isVisible,
-                              id: filteredQuestions[index].id,
-                              latitude: filteredQuestions[index].latitude,
-                              longitude: filteredQuestions[index].longitude,
-                              address: filteredQuestions[index].address,
-                              zone: filteredQuestions[index].zone,
-                              question: filteredQuestions[index].question,
-                              answers: filteredQuestions[index].answers,
-                              correctAnswerIndex: filteredQuestions[index].correctAnswerIndex,
-                              eventId: widget.event.id,
-                              createdAt: '',
-                              points: filteredQuestions[index].points,
-                              updatedAt: '',
-                            ),
-                            onEditQuestion: (question) {
-                              BlocProvider.of<EventCubit>(context).updateQuestion(question, widget.event.id.toString());
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  )
-                ],
-              ),
-            ),
-          )
-        : const Text(
-            'Sem questões criadas para esta zona',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
-          );
+    return BlocConsumer<EventCubit, EventState>(
+      buildWhen: (previous, current) =>
+          current is GetQuestionLoaded || current is GetQuestionsError || current is GetQuestionsLoading,
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is GetQuestionsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is GetQuestionLoaded) {
+          if (isFirstEntrance) {
+            filteredQuestions = List<Question>.from(state.questions);
+            allQuestions = List<Question>.from(state.questions);
+            isFirstEntrance = false;
+          }
+
+          return filteredQuestions.isNotEmpty
+              ? SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 24, right: 24),
+                    child: Column(
+                      children: [
+                        _buildQuestionTitle(),
+                        const SizedBox(height: 8),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filteredQuestions.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              children: [
+                                QuestionItem(
+                                  event: widget.event,
+                                  onDeleteQuestion: (question) {
+                                    isFirstEntrance = true;
+                                    BlocProvider.of<EventCubit>(context)
+                                        .deleteQuestion(question.id.toString(), widget.event.id.toString());
+                                  },
+                                  question: Question(
+                                    isVisible: filteredQuestions[index].isVisible,
+                                    id: filteredQuestions[index].id,
+                                    latitude: filteredQuestions[index].latitude,
+                                    longitude: filteredQuestions[index].longitude,
+                                    address: filteredQuestions[index].address,
+                                    zone: filteredQuestions[index].zone,
+                                    question: filteredQuestions[index].question,
+                                    answers: filteredQuestions[index].answers,
+                                    correctAnswerIndex: filteredQuestions[index].correctAnswerIndex,
+                                    eventId: widget.event.id,
+                                    createdAt: '',
+                                    points: filteredQuestions[index].points,
+                                    updatedAt: '',
+                                  ),
+                                  onEditQuestion: (question) {
+                                    BlocProvider.of<EventCubit>(context)
+                                        .updateQuestion(question, widget.event.id.toString());
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              : const Text("Sem questões criadas");
+        } else {
+          return const Text("No questions loaded");
+        }
+      },
+    );
   }
 
   Widget _buildQuestionTitle() {
@@ -181,11 +197,11 @@ class _QuestionListState extends State<QuestionList> {
     filteredQuestions.clear();
     if (zone == "All") {
       setState(() {
-        filteredQuestions = List<Question>.from(widget.questionList);
+        filteredQuestions = List<Question>.from(allQuestions);
       });
     } else {
       setState(() {
-        filteredQuestions = widget.questionList.where((question) {
+        filteredQuestions = allQuestions.where((question) {
           return question.zone.toLowerCase().startsWith(zone.toLowerCase());
         }).toList();
       });

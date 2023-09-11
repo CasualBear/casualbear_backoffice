@@ -62,3 +62,13 @@ class GetScoresLoaded extends EventState {
 }
 
 class GetScoresError extends EventState {}
+
+class GetQuestionsLoading extends EventState {}
+
+class GetQuestionLoaded extends EventState {
+  final List<Question> questions;
+
+  GetQuestionLoaded({required this.questions});
+}
+
+class GetQuestionsError extends EventState {}

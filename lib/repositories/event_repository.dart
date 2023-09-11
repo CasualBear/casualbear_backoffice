@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:casualbear_backoffice/network/models/event.dart';
+import 'package:casualbear_backoffice/network/models/question.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import '../network/services/api_error.dart';
@@ -72,6 +73,17 @@ class EventRepository {
       var eventData = response.data['event'];
       var event = Event.fromJson(eventData as Map<String, dynamic>);
       return event;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Question>> getQuestions(String eventId) async {
+    try {
+      final response = await apiService.get('/api/event/events/$eventId/questions');
+      var questionDataList = List<Map<String, dynamic>>.from(response.data);
+      var listOfQuestions = questionDataList.map((questionData) => Question.fromJson(questionData)).toList();
+      return listOfQuestions;
     } catch (e) {
       rethrow;
     }

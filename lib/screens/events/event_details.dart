@@ -208,8 +208,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                 Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        TeamList(eventId: state.event.id.toString(), teamList: state.event.teams ?? []),
+                                    builder: (BuildContext context) => TeamList(eventId: state.event.id.toString()),
                                   ),
                                 );
                               },
@@ -222,8 +221,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                 Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        QuestionList(event: state.event, questionList: state.event.questions),
+                                    builder: (BuildContext context) => QuestionList(event: state.event),
                                   ),
                                 );
                               },

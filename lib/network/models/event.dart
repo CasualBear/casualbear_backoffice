@@ -13,9 +13,7 @@ class Event {
   final String rawUrl;
   final String createdAt;
   final String updatedAt;
-  final List<Question> questions;
   final String hasStarted;
-  final List<Team>? teams;
 
   Event({
     required this.id,
@@ -24,10 +22,8 @@ class Event {
     required this.selectedColor,
     required this.hasStarted,
     required this.rawUrl,
-    required this.teams,
     required this.createdAt,
     required this.updatedAt,
-    required this.questions,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);

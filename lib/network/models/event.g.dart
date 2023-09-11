@@ -13,14 +13,8 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       selectedColor: json['selectedColor'] as int,
       hasStarted: json['hasStarted'] as String,
       rawUrl: json['rawUrl'] as String,
-      teams: (json['teams'] as List<dynamic>?)
-          ?.map((e) => Team.fromJson(e as Map<String, dynamic>))
-          .toList(),
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
-      questions: (json['questions'] as List<dynamic>)
-          .map((e) => Question.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -31,7 +25,5 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'rawUrl': instance.rawUrl,
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
-      'questions': instance.questions,
       'hasStarted': instance.hasStarted,
-      'teams': instance.teams,
     };

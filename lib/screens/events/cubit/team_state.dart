@@ -20,3 +20,33 @@ class UpdateTeamZonesLoaded extends TeamState {
 }
 
 class UpdateTeamZonesError extends TeamState {}
+
+//  Get All the teams
+
+class GetTeamsLoading extends TeamState {}
+
+class GetTeamsLoaded extends TeamState {
+  final List<Team>? teams;
+
+  GetTeamsLoaded({this.teams});
+}
+
+class GetTeamsError extends TeamState {}
+
+/// Update a memmber inside the team
+class UpdateTeamMemberLoading extends TeamState {}
+
+class UpdateTeamMemberLoaded extends TeamState {}
+
+class UpdateTeamMemberError extends TeamState {}
+
+/// Get Single Team
+class GetTeamLoading extends TeamState {}
+
+class GetTeamLoaded extends TeamState {
+  final Team? team;
+
+  GetTeamLoaded({this.team});
+}
+
+class GetTeamError extends TeamState {}
