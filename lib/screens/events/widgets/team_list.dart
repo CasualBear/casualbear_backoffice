@@ -168,6 +168,13 @@ class _TeamListState extends State<TeamList> {
                 const SizedBox(height: 5),
                 Row(
                   children: [
+                    const Text('Team ID:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
+                    Text(team.id.toString(), style: const TextStyle(fontSize: 13)),
+                  ],
+                ),
+                Row(
+                  children: [
                     const Text('Estado:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     Text(team.isVerified.isEmpty ? 'Equipa não verificada ⛔️' : team.isVerified,
