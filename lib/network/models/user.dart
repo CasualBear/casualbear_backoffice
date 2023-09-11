@@ -4,24 +4,24 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  final int id;
-  final String name;
-  final String email;
-  final String? role;
-  final String password;
-  final DateTime dateOfBirth;
-  final String postalCode;
-  final String cc;
-  final String phone;
-  final String address;
-  final String nosCard;
-  final String tShirtSize;
-  final bool isCheckedPrivacyData;
-  final bool isCheckedTermsConditions;
-  final bool isCaptain;
-  final String teamId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  int id;
+  late String name;
+  String email;
+  String? role;
+  String password;
+  DateTime dateOfBirth;
+  String postalCode;
+  String cc;
+  String phone;
+  String address;
+  String nosCard;
+  String tShirtSize;
+  bool isCheckedPrivacyData;
+  bool isCheckedTermsConditions;
+  bool isCaptain;
+  String teamId;
+  DateTime createdAt;
+  DateTime updatedAt;
 
   User({
     required this.id,

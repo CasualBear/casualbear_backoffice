@@ -290,6 +290,7 @@ class _TeamEditState extends State<TeamEdit> {
                     return ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
+                            updateUserDataFromControllers();
                             BlocProvider.of<TeamCubit>(context).updateTeamMember(widget.user);
                           }
                         },
@@ -300,6 +301,18 @@ class _TeamEditState extends State<TeamEdit> {
             ),
           ),
         ));
+  }
+
+  void updateUserDataFromControllers() {
+    widget.user.name = nomeController.text;
+    widget.user.cc = biController.text;
+    widget.user.postalCode = codigoPostalController.text;
+    widget.user.phone = telefoneController.text;
+    widget.user.address = moradaController.text;
+    widget.user.email = emailController.text;
+    widget.user.dateOfBirth = DateTime.parse(dataNascimentoController.text);
+    widget.user.nosCard = numClienteNOSController.text;
+    widget.user.tShirtSize = selectedTShirtSize!;
   }
 
   bool areAllFieldsComplete() {
