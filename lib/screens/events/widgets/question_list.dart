@@ -103,6 +103,7 @@ class _QuestionListState extends State<QuestionList> {
                                     isVisible: filteredQuestions[index].isVisible,
                                     id: filteredQuestions[index].id,
                                     latitude: filteredQuestions[index].latitude,
+                                    imageUrl: filteredQuestions[index].imageUrl ?? '',
                                     longitude: filteredQuestions[index].longitude,
                                     address: filteredQuestions[index].address,
                                     zone: filteredQuestions[index].zone,

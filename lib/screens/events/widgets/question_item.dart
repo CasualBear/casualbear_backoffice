@@ -87,6 +87,20 @@ class QuestionItemState extends State<QuestionItem> {
                         fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
                       ),
                   children: [
+                    const TextSpan(
+                        text: 'Imagem: ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+                    TextSpan(
+                        text: widget.question.imageUrl!.isEmpty ? 'Sem imagem' : widget.question.imageUrl,
+                        style: const TextStyle(color: Colors.black)),
+                  ],
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: DefaultTextStyle.of(context).style.fontSize! + 3,
+                      ),
+                  children: [
                     const TextSpan(text: 'Id: ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                     TextSpan(text: widget.question.id.toString()),
                   ],

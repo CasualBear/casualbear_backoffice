@@ -27,6 +27,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   late TextEditingController _questionController;
   late TextEditingController _pointsController;
   late TextEditingController _locationController;
+  late TextEditingController _imageController;
   late LatLong questionCoordinates;
   String? selectedZone;
 
@@ -57,6 +58,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
     _pointsController = TextEditingController();
     _locationController = TextEditingController();
     _answerControllers.add(TextEditingController());
+    _imageController = TextEditingController();
 
     selectedZone = zones[0];
   }
@@ -147,6 +149,13 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _imageController,
+              decoration: const InputDecoration(
+                labelText: 'Imagem',
+              ),
             ),
             Row(
               children: [
@@ -307,6 +316,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 id: 1, // backend ignores this
                 question: _questionController.text.isEmpty ? "" : _questionController.text,
                 isVisible: !_isInvisible,
+                imageUrl: _imageController.text,
                 answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
                 zone: selectedZone ?? 'ZoneA',

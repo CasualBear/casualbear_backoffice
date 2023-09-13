@@ -13,6 +13,7 @@ class Question {
   final bool isVisible;
   final String zone;
   final String latitude;
+  final String? imageUrl;
   final String longitude;
   final String address;
   final String createdAt;
@@ -29,6 +30,7 @@ class Question {
     required this.zone,
     required this.latitude,
     required this.longitude,
+    required this.imageUrl,
     required this.address,
     required this.createdAt,
     required this.updatedAt,
