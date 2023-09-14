@@ -92,11 +92,8 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 16),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.pause,
-                              color: Colors.grey,
-                            ),
+                          child: ElevatedButton(
+                            child: const Text('Reset Jogo'),
                             onPressed: () {
                               _showAlertDialog(
                                 context,
@@ -116,10 +113,10 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 16),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.green,
+                          child: ElevatedButton(
+                            child: const Text(
+                              'Começar Jogo',
+                              style: TextStyle(color: Colors.green),
                             ),
                             onPressed: () {
                               _showAlertDialog(
@@ -140,10 +137,10 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 24),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.stop,
-                              color: Colors.red,
+                          child: ElevatedButton(
+                            child: const Text(
+                              'Terminar Jogo',
+                              style: TextStyle(color: Colors.red),
                             ),
                             onPressed: () {
                               _showAlertDialog(
