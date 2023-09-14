@@ -108,6 +108,14 @@ class EventRepository {
     }
   }
 
+  resetEvent() async {
+    try {
+      await apiService.post('/api/event/event/reset/1');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   endEvent() async {
     try {
       await apiService.post('/api/event/event/stop/1');

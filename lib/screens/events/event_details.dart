@@ -104,7 +104,7 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                                   setState(() {
                                     gameStarted = 'pre_game';
                                     EventRepository eventRepository = EventRepository(ApiService.shared);
-                                    eventRepository.startEvent();
+                                    eventRepository.resetEvent();
                                   });
                                 }, // Provide the start event callback
                               );
