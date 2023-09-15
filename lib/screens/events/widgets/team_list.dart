@@ -20,12 +20,15 @@ class _TeamListState extends State<TeamList> {
   bool isFirstEntrance = true;
   List<Team> filteredTeams = [];
   List<Team> allTeams = [];
+  int numberOfCheckedinTeams = 0;
+  int numberOfValidatedTeams = 0;
 
   @override
   void initState() {
     if (isFirstEntrance) {
       BlocProvider.of<TeamCubit>(context).getTeams(widget.eventId);
     }
+
     super.initState();
   }
 
@@ -57,6 +60,15 @@ class _TeamListState extends State<TeamList> {
             if (isFirstEntrance) {
               filteredTeams = List<Team>.from(state.teams as Iterable);
               allTeams = List<Team>.from(state.teams as Iterable);
+              for (var element in filteredTeams) {
+                if (element.isCheckedIn) {
+                  ++numberOfCheckedinTeams;
+                }
+
+                if (element.isVerified == "Approved") {
+                  ++numberOfValidatedTeams;
+                }
+              }
               isFirstEntrance = false;
             }
 
@@ -94,6 +106,38 @@ class _TeamListState extends State<TeamList> {
                             exportToExcel(state.teams ?? []);
                           },
                           child: const Text("Exportar para Excel")),
+                      const SizedBox(width: 5),
+                      const Text(
+                        'Equipas Checked-In:',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        numberOfCheckedinTeams.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Equipas Validadas:',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        numberOfValidatedTeams.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),

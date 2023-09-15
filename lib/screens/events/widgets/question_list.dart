@@ -29,9 +29,7 @@ class _QuestionListState extends State<QuestionList> {
     "ZoneC",
     "ZoneCChallenges",
     "ZoneD",
-    "ZoneDChallenges",
-    "ZoneE",
-    "ZoneEChallenges",
+    "ZoneDChallenges"
   ];
 
   @override
