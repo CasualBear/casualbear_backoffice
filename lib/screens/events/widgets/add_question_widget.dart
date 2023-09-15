@@ -234,7 +234,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
               ),
               const SizedBox(height: 10),
               Visibility(
-                visible: !(_isFake || _isChallenge),
+                visible: !(_isFake || _isChallenge || _isInvisible),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
