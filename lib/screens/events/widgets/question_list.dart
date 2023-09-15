@@ -98,6 +98,9 @@ class _QuestionListState extends State<QuestionList> {
                                     isFirstEntrance = true;
                                     BlocProvider.of<EventCubit>(context)
                                         .deleteQuestion(question.id.toString(), widget.event.id.toString());
+                                    Future.delayed(const Duration(milliseconds: 300), () {
+                                      BlocProvider.of<EventCubit>(context).getQuestions(widget.event.id);
+                                    });
                                   },
                                   question: Question(
                                     isVisible: filteredQuestions[index].isVisible,
@@ -192,6 +195,9 @@ class _QuestionListState extends State<QuestionList> {
   void addQuestion(QuestionRequest question) {
     isFirstEntrance = true;
     BlocProvider.of<EventCubit>(context).addQuestion(question, widget.event.id.toString());
+    Future.delayed(const Duration(seconds: 1), () {
+      BlocProvider.of<EventCubit>(context).getQuestions(widget.event.id);
+    });
   }
 
   void _filterQuestions(String zone) {
