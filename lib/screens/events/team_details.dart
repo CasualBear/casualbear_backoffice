@@ -1,12 +1,9 @@
 import 'package:casualbear_backoffice/network/models/team.dart';
-import 'package:casualbear_backoffice/network/models/update_team_request.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:casualbear_backoffice/repositories/team_repository.dart';
-import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/team_details_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TeamDetails extends StatefulWidget {
   final String eventId;
@@ -54,31 +51,6 @@ class _TeamDetailsState extends State<TeamDetails> {
             team = snapshot.data;
             return TeamDetailsWidget(
               team: team!,
-              onChangedCheckIn: (bool newValue) {
-                // Update the isCheckedIn value through the TeamCubit
-                List<UpdateTeamRequest> updatedFlags = [
-                  UpdateTeamRequest(
-                    teamId: team!.id,
-                    isCheckedIn: newValue,
-                    isVerified: team!.isVerified,
-                  ),
-                ];
-                BlocProvider.of<TeamCubit>(context).updateTeamValidationAndCheckin(updatedFlags);
-              },
-              onChangedValidation: (String newValue) {
-                // Update the isValidated value through the TeamCubit
-                setState(() {
-                  team!.isVerified = newValue;
-                });
-                List<UpdateTeamRequest> updatedFlags = [
-                  UpdateTeamRequest(
-                    teamId: team!.id,
-                    isCheckedIn: team!.isCheckedIn,
-                    isVerified: newValue,
-                  ),
-                ];
-                BlocProvider.of<TeamCubit>(context).updateTeamValidationAndCheckin(updatedFlags);
-              },
               eventId: widget.eventId,
             );
           }

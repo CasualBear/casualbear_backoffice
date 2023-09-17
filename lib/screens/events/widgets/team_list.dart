@@ -200,6 +200,8 @@ class _TeamListState extends State<TeamList> {
     return GestureDetector(
       onTap: () async {
         isFirstEntrance = true;
+        numberOfCheckedinTeams = 0;
+        numberOfValidatedTeams = 0;
         await Navigator.push<void>(
           context,
           MaterialPageRoute<void>(

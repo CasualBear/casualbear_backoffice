@@ -76,15 +76,15 @@ class _QuestionListState extends State<QuestionList> {
             isFirstEntrance = false;
           }
 
-          return filteredQuestions.isNotEmpty
-              ? SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 24, right: 24),
-                    child: Column(
-                      children: [
-                        _buildQuestionTitle(),
-                        const SizedBox(height: 8),
-                        ListView.builder(
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24),
+              child: Column(
+                children: [
+                  _buildQuestionTitle(),
+                  const SizedBox(height: 8),
+                  filteredQuestions.isNotEmpty
+                      ? ListView.builder(
                           shrinkWrap: true,
                           itemCount: filteredQuestions.length,
                           itemBuilder: (BuildContext context, int index) {
@@ -125,11 +125,11 @@ class _QuestionListState extends State<QuestionList> {
                             );
                           },
                         )
-                      ],
-                    ),
-                  ),
-                )
-              : const Text("Sem questões criadas");
+                      : const Text("Sem questões criadas")
+                ],
+              ),
+            ),
+          );
         } else {
           return const Text("No questions loaded");
         }

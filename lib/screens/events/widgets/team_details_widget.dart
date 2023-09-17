@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
+import 'package:casualbear_backoffice/network/models/update_team_request.dart';
 import 'package:casualbear_backoffice/network/models/user.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/team_cubit.dart';
@@ -12,29 +13,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class TeamDetailsWidget extends StatefulWidget {
   final Team team;
   final String eventId;
-  final ValueChanged<bool> onChangedCheckIn;
-  final ValueChanged<String> onChangedValidation;
 
-  const TeamDetailsWidget({
-    super.key,
-    required this.team,
-    required this.eventId,
-    required this.onChangedCheckIn,
-    required this.onChangedValidation,
-  });
+  const TeamDetailsWidget({super.key, required this.team, required this.eventId});
 
   @override
   TeamDetailsWidgetState createState() => TeamDetailsWidgetState();
 }
 
 class TeamDetailsWidgetState extends State<TeamDetailsWidget> {
-  bool memberCheckedIn = false;
+  bool isCheckedIn = false;
   String? isValidated;
   List<Zones> zones = [];
 
   @override
   void initState() {
-    memberCheckedIn = widget.team.isCheckedIn;
+    isCheckedIn = widget.team.isCheckedIn;
     isValidated = widget.team.isVerified;
     zones = parseZones(widget.team.zones);
     super.initState();
@@ -61,12 +54,11 @@ class TeamDetailsWidgetState extends State<TeamDetailsWidget> {
             Row(
               children: [
                 Checkbox(
-                  value: memberCheckedIn,
+                  value: isCheckedIn,
                   onChanged: (bool? newValue) {
                     setState(() {
-                      memberCheckedIn = newValue ?? false;
+                      isCheckedIn = newValue ?? false;
                     });
-                    widget.onChangedCheckIn(newValue ?? false);
                   },
                 ),
                 const Text('Efetuar Check-in'),
@@ -79,7 +71,6 @@ class TeamDetailsWidgetState extends State<TeamDetailsWidget> {
                     setState(() {
                       isValidated = newValue;
                     });
-                    widget.onChangedValidation(newValue ?? "Selecionar");
                   },
                   items: <String>['Selecionar', 'Validating', 'Approved', 'Denied']
                       .map<DropdownMenuItem<String>>((String value) {
@@ -89,6 +80,23 @@ class TeamDetailsWidgetState extends State<TeamDetailsWidget> {
                     );
                   }).toList(),
                 ),
+                const SizedBox(width: 5),
+                ElevatedButton(
+                    onPressed: () {
+                      List<UpdateTeamRequest> updatedFlags = [
+                        UpdateTeamRequest(
+                          teamId: widget.team.id,
+                          isCheckedIn: isCheckedIn,
+                          isVerified: isValidated!,
+                        ),
+                      ];
+                      BlocProvider.of<TeamCubit>(context).updateTeamValidationAndCheckin(updatedFlags);
+
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Dados salvos, por favor confirme na lista da equipa"),
+                      ));
+                    },
+                    child: const Text("Submteter Informação"))
               ],
             ),
             const SizedBox(height: 10),
