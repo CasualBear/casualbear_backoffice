@@ -174,12 +174,12 @@ class QuestionItemState extends State<QuestionItem> {
               const SizedBox(height: 16),
               widget.question.question.isEmpty
                   ? const Text(
-                      'Isto é uma pergunta falsa',
+                      'Isto é um engano',
                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                     )
                   : widget.question.answers?.isEmpty ?? false
                       ? const Text(
-                          'Isto é um desafio',
+                          'Isto é uma experiência',
                           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
                         )
                       : const Text(

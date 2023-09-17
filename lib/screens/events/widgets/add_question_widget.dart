@@ -45,9 +45,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
     "ZoneC",
     "ZoneCChallenges",
     "ZoneD",
-    "ZoneDChallenges",
-    "ZoneE",
-    "ZoneEChallenges",
+    "ZoneDChallenges"
   ];
 
   @override
@@ -187,7 +185,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 visible: !(_isFake || _isInvisible),
                 child: Row(
                   children: [
-                    const Text('É desafio'),
+                    const Text('É Experiência?'),
                     Switch(
                       value: _isChallenge,
                       onChanged: (value) {
@@ -204,7 +202,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 visible: !(_isChallenge || _isInvisible),
                 child: Row(
                   children: [
-                    const Text('É pergunta falsa?'),
+                    const Text('É Engano?'),
                     Switch(
                       value: _isFake,
                       onChanged: (value) {
@@ -222,7 +220,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 visible: !(_isFake || _isChallenge),
                 child: Row(
                   children: [
-                    const Text('É pergunta Invisivel?'),
+                    const Text('É Pontos Extra?'),
                     Switch(
                       value: _isInvisible,
                       onChanged: (value) {
@@ -236,7 +234,7 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
               ),
               const SizedBox(height: 10),
               Visibility(
-                visible: !(_isFake || _isChallenge),
+                visible: !(_isFake || _isChallenge || _isInvisible),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
