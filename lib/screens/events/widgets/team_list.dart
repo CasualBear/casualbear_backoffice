@@ -285,12 +285,12 @@ class _TeamListState extends State<TeamList> {
     final csvData = StringBuffer();
 
     // Add headers
-    csvData.writeln('TeamId,Nome, Verificacao, Check-in, Email, DataCriação');
+    csvData.writeln('TeamId,Nome, Verificacao, Check-in, DataCriação');
 
     // Add data rows
     for (final team in teams) {
       csvData.writeln(
-          '${team.id},${team.name},${team.isVerified},${team.isCheckedIn},${team.totalPoints},${team.createdAt}');
+          '${team.id},${team.name},${team.isCheckedIn},${team.createdAt}');
     }
 
     final blob = html.Blob([Uint8List.fromList(csvData.toString().codeUnits)]);
