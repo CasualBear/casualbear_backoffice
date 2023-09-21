@@ -284,13 +284,35 @@ class _TeamListState extends State<TeamList> {
   void exportToExcel(List<Team> teams) {
     final csvData = StringBuffer();
 
-    // Add headers
-    csvData.writeln('TeamId,Nome, Verificacao, Check-in, DataCriação');
+    // Add headers for Team and User data
+    csvData.writeln(
+        'TeamId,TeamName,TeamVerification,TeamCheckIn,TeamCreatedAt,UserId,UserName,UserEmail,UserNosCard,UserIsCaptain,UserPhone,UserAddress,UserCC,UserPostalCode');
 
-    // Add data rows
+    // Iterate through teams and their members
     for (final team in teams) {
-      csvData.writeln(
-          '${team.id},${team.name},${team.isCheckedIn},${team.createdAt}');
+      final teamId = team.id;
+      final teamName = team.name;
+      final teamVerification = team.isVerified ?? '';
+      final teamCheckIn = team.isCheckedIn ? 'Checked In' : 'Not Checked In';
+      final teamCreatedAt = team.createdAt.toString();
+
+      if (team.members != null) {
+        for (final user in team.members!) {
+          final userId = user.id;
+          final userName = user.name;
+          final userEmail = user.email;
+          final userNosCard = user.nosCard;
+          final userIsCaptain = user.isCaptain ? 'Yes' : 'No';
+          final userPhone = user.phone;
+          final userAddress = user.address;
+          final userCC = user.cc;
+          final userPostalCode = user.postalCode;
+
+          // Append the CSV row for this team member
+          csvData.writeln(
+              '$teamId,"$teamName",$teamVerification,$teamCheckIn,$teamCreatedAt,$userId,"$userName",$userEmail,$userNosCard,$userIsCaptain,$userPhone,"$userAddress",$userCC,$userPostalCode');
+        }
+      }
     }
 
     final blob = html.Blob([Uint8List.fromList(csvData.toString().codeUnits)]);
