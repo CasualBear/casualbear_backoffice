@@ -2,6 +2,7 @@ import 'package:casualbear_backoffice/network/models/event.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:casualbear_backoffice/repositories/event_repository.dart';
 import 'package:casualbear_backoffice/screens/events/cubit/event_cubit.dart';
+import 'package:casualbear_backoffice/screens/events/live_location/live_location_screen.dart';
 import 'package:casualbear_backoffice/screens/events/team_scores.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/question_list.dart';
 import 'package:casualbear_backoffice/screens/events/widgets/team_list.dart';
@@ -188,7 +189,12 @@ class EventDetailsScreenState extends State<EventDetailsScreen> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              // Handle Ver Localização em tempo real button tap
+                              Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) => const LiveLocationScreen(),
+                                ),
+                              );
                             },
                             child: Text('Ver Localização de Equipas'.toUpperCase(),
                                 style: const TextStyle(color: Colors.black)),

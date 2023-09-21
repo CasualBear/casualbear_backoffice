@@ -36,4 +36,13 @@ class Team {
   factory Team.fromJson(Map<String, dynamic> json) => _$TeamFromJson(json);
 
   Map<String, dynamic> toJson() => _$TeamToJson(this);
+
+  String get searchableText {
+    // string containing all the members' names and the team name
+    String membersNames = name;
+    members?.forEach((member) {
+      membersNames += member.name;
+    });
+    return membersNames;
+  }
 }

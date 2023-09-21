@@ -28,7 +28,7 @@ class SocketManager {
   }
 
   SocketManager._internal() {
-    _socket = IO.io("wss://casuabearapi.herokuapp.com/", <String, dynamic>{
+    _socket = IO.io("https://casuabearapi.herokuapp.com/", <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
     });
@@ -90,7 +90,7 @@ extension EventTypeValues on EventType {
       case EventType.gameTimeChanged:
         return 'GameTimeChanged';
       case EventType.location:
-        return 'locationUpdated';
+        return 'locationSaved';
       case EventType.logout:
         return 'TeamLogout';
     }
@@ -112,7 +112,7 @@ extension EventTypeValues on EventType {
         return EventType.zonesUpdated;
       case 'GameTimeChanged':
         return EventType.gameTimeChanged;
-      case 'locationUpdated':
+      case 'locationSaved':
         return EventType.location;
       case 'TeamLogout':
         return EventType.logout;

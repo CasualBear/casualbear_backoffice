@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:casualbear_backoffice/local_storage.dart';
+import 'package:casualbear_backoffice/network/models/location_data.dart';
 import 'package:casualbear_backoffice/network/models/team.dart';
 import 'package:casualbear_backoffice/network/models/update_team_request.dart';
 import 'package:casualbear_backoffice/network/models/user.dart';
 import 'package:casualbear_backoffice/network/models/zones.dart';
 import 'package:casualbear_backoffice/network/services/api_service.dart';
 import 'package:dio/dio.dart';
+import 'package:latlong2/latlong.dart';
 import '../network/services/api_error.dart';
 
 class TeamRepository {
@@ -26,7 +29,8 @@ class TeamRepository {
     }
   }
 
-  Future<void> updateTeamZones(List<Zones> updateTeamZones, String teamId) async {
+  Future<void> updateTeamZones(
+      List<Zones> updateTeamZones, String teamId) async {
     final Map<String, dynamic> zonesMap = {
       "zones": updateTeamZones.map((zone) => zone.toJson()).toList(),
     };
@@ -47,7 +51,8 @@ class TeamRepository {
     try {
       final response = await apiService.get('/api/teams/events/$eventId/teams');
       var eventDataList = List<Map<String, dynamic>>.from(response.data);
-      var listOfTeams = eventDataList.map((eventData) => Team.fromJson(eventData)).toList();
+      var listOfTeams =
+          eventDataList.map((eventData) => Team.fromJson(eventData)).toList();
       return listOfTeams;
     } catch (e) {
       rethrow;
@@ -56,11 +61,36 @@ class TeamRepository {
 
   Future<Team> getTeamDetails(String eventId, String teamId) async {
     try {
-      final response = await apiService.get('/api/teams/event/$eventId/teams/$teamId');
+      final response =
+          await apiService.get('/api/teams/event/$eventId/teams/$teamId');
       var responseData = response.data as Map<String, dynamic>;
       var teamData = responseData['team'] as Map<String, dynamic>;
+      int? eventInitHour = responseData['eventInitHour'];
+      if (eventInitHour != null) {
+        saveGameStartTime(DateTime.fromMillisecondsSinceEpoch(eventInitHour));
+      }
       return Team.fromJson(teamData);
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<LatLng>> getTeamLocations(int teamId) async {
+    try {
+      final response =
+          await apiService.get('/api/teams/teams/$teamId/location');
+      var responseData = response.data as List;
+      List<LocationData> locationDataList =
+          responseData.map((data) => LocationData.fromJson(data)).toList();
+
+      final List<LatLng> locations = locationDataList
+          .map((locationData) =>
+              LatLng(locationData.latitude, locationData.longitude))
+          .toList();
+
+      return locations;
+    } catch (e) {
+      print('Error fetching team locations: $e');
       rethrow;
     }
   }
