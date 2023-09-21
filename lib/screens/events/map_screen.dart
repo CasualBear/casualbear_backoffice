@@ -13,6 +13,7 @@ class MapScreen extends StatelessWidget {
           title: const Text('Select Location'),
         ),
         body: FlutterLocationPicker(
+            trackMyPosition: true,
             initPosition: const LatLong(38.78450106308353, -9.159145343998064),
             selectLocationButtonStyle: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.white),

@@ -26,7 +26,8 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _questionController;
   late TextEditingController _pointsController;
-  late TextEditingController _locationController;
+  late TextEditingController _latitudeController;
+  late TextEditingController _longitudeController;
   late TextEditingController _imageController;
   late LatLong questionCoordinates;
   String? selectedZone;
@@ -54,7 +55,8 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
 
     _questionController = TextEditingController();
     _pointsController = TextEditingController();
-    _locationController = TextEditingController();
+    _latitudeController = TextEditingController();
+    _longitudeController = TextEditingController();
     _answerControllers.add(TextEditingController());
     _imageController = TextEditingController();
 
@@ -64,7 +66,8 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
   @override
   void dispose() {
     _questionController.dispose();
-    _locationController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
     _pointsController.dispose();
     for (var controller in _answerControllers) {
       controller.dispose();
@@ -116,25 +119,19 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
               ),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _locationController,
+                enableInteractiveSelection: true,
+                controller: _latitudeController,
                 decoration: const InputDecoration(
-                  labelText: 'Localização',
+                  labelText: 'Latitude',
                 ),
-                onTap: () async {
-                  await Navigator.push<String?>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MapScreen(
-                        onAddressPicked: (latitude, longitude, address) {
-                          questionCoordinates = LatLong(latitude, longitude);
-                          _locationController.text = address;
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  );
-                },
-                readOnly: true,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                enableInteractiveSelection: true,
+                controller: _longitudeController,
+                decoration: const InputDecoration(
+                  labelText: 'Longitude',
+                ),
               ),
               const SizedBox(height: 8),
               TextFormField(
@@ -320,9 +317,9 @@ class AddQuestionDialogState extends State<AddQuestionDialog> {
                 answers: answers,
                 correctAnswerIndex: _correctAnswerIndex,
                 zone: selectedZone ?? 'ZoneA',
-                latitude: questionCoordinates.latitude.toString(),
-                longitude: questionCoordinates.longitude.toString(),
-                address: _locationController.text,
+                latitude: _latitudeController.text.toString(),
+                longitude: _longitudeController.text.toString(),
+                address: '',
                 eventId: widget.event.id, createdAt: '', points: int.parse(_pointsController.text), updatedAt: '',
               );
 
